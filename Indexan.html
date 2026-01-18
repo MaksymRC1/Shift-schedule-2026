@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Графік змін 2026 — автоматизований, зручно відображає зміни та легенду."
+    />
+    <title>Графік змін 2026</title>
+    <style>
+      :root {
+        --bg: #fff;
+        --border: #999;
+        --th-bg: #eee;
+        --shift-1: #ffe08a; /* yellow */
+        --shift-2: #98cfff; /* blue */
+        --shift-3: #8fd18f; /* green */
+        --off: #ffffff;
+      }
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        background: var(--bg);
+        color: #111;
+      }
+      h1 {
+        text-align: center;
+      }
+
+      .calendar-wrapper {
+        overflow-x: auto;
+        margin-bottom: 30px;
+      }
+
+      table.calendar {
+        border-collapse: collapse;
+        width: 100%;
+        min-width: 720px; /* дозволяє горизонтальну прокрутку на маленьких екранах */
+      }
+
+      table.calendar th,
+      table.calendar td {
+        border: 1px solid var(--border);
+        padding: 6px;
+        text-align: center;
+        vertical-align: middle;
+        min-width: 28px;
+      }
+
+      table.calendar th {
+        background: var(--th-bg);
+        font-weight: 600;
+      }
+
+      /* shift classes */
+      .shift-1 {
+        background: var(--shift-1);
+      }
+      .shift-2 {
+        background: var(--shift-2);
+      }
+      .shift-3 {
+        background: var(--shift-3);
+      }
+      .off {
+        background: var(--off);
+      }
+
+      /* Legend */
+      .legend {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 12px;
+      }
+      .legend-item {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        font-size: 14px;
+      }
+      .legend-swatch {
+        width: 20px;
+        height: 14px;
+        border: 1px solid var(--border);
+      }
+      /* Responsive improvements */
+      @media (max-width: 640px) {
+        table.calendar {
+          min-width: 600px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Графік змін 2026</h1>
+
+    <div class="legend" aria-hidden="false" role="list">
+      <div class="legend-item" role="listitem">
+        <span class="legend-swatch shift-1" aria-hidden="true"></span>Зміна 1
+      </div>
+      <div class="legend-item" role="listitem">
+        <span class="legend-swatch shift-2" aria-hidden="true"></span>Зміна 2
+      </div>
+      <div class="legend-item" role="listitem">
+        <span class="legend-swatch shift-3" aria-hidden="true"></span>Зміна 3
+      </div>
+      <div class="legend-item" role="listitem">
+        <span class="legend-swatch off" aria-hidden="true"></span>Вихідний / без
+        зміни
+      </div>
+    </div>
+
+    <!-- Контейнер для автоматично згенерованих таблиць -->
+    <div id="calendars"></div>
+
+    <script>
+      /**
+       * Приклад структури даних для одного місяця.
+       * Замість ручного вставлення таблиць — зберігайте всі місяці у JSON і генеруйте.
+       *
+       * Формат (приклад для січня):
+       * month: назва місяця
+       * days: кількість днів
+       * weekdays: масив скорочених назв днів починаючи з 1-го дня місяця (необов'язково — можна обчислити)
+       * rows: масив для кожної групи (A, Б, В, ...) — кожен масив містить length = days і значення: 0->off, 1->shift-1, 2->shift-2, 3->shift-3
+       *
+       * Тут приклад лише для демонстрації — підставте свої реальні дані.
+       */
+      const scheduleData = [
+        {
+          month: "Січень",
+          days: 31,
+          // Приклад: перші 31 значення для A; 0 = off, 1 = shift-1, 2 = shift-2, 3 = shift-3
+          rows: {
+            A: [
+              1, 0, 0, 3, 3, 3, 0, 2, 2, 2, 0, 0, 1, 1, 1, 0, 0, 3, 3, 3, 0, 2,
+              2, 2, 0, 2, 0, 1, 1, 1,
+            ],
+            Б: [
+              2, 2, 0, 0, 1, 1, 1, 0, 0, 3, 3, 3, 0, 2, 0, 2, 2, 2, 0, 1, 1, 1,
+              0, 0, 3, 3, 3, 0, 2, 2,
+            ],
+            В: [
+              0, 2, 2, 2, 2, 0, 0, 1, 1, 1, 0, 0, 3, 3, 3, 0, 0, 2, 2, 2, 0, 1,
+              1, 1, 0, 0, 3, 3, 3, 0,
+            ],
+            Г: [
+              3, 3, 3, 0, 2, 2, 2, 0, 0, 1, 1, 1, 0, 0, 3, 3, 3, 0, 2, 2, 2, 0,
+              0, 1, 1, 1, 0, 0, 3, 3,
+            ],
+            Д: [
+              0, 1, 1, 1, 0, 0, 3, 3, 3, 0, 0, 2, 2, 2, 0, 1, 1, 1, 0, 0, 3, 3,
+              3, 0, 0, 2, 2, 2, 0, 0, 0,
+            ],
+          },
+        },
+        // Додайте інші місяці в такому ж форматі
+      ];
+
+      const dayNames = ["пн", "вт", "ср", "чт", "пт", "сб", "нд"];
+
+      function renderMonth(data) {
+        const wrapper = document.createElement("div");
+        wrapper.className = "calendar-wrapper";
+        wrapper.setAttribute("aria-label", `Календар ${data.month} 2026`);
+
+        const table = document.createElement("table");
+        table.className = "calendar";
+        table.setAttribute("role", "table");
+
+        // Caption
+        const caption = document.createElement("caption");
+        caption.textContent = `${data.month} 2026`;
+        table.appendChild(caption);
+
+        const thead = document.createElement("thead");
+        const trHead1 = document.createElement("tr");
+
+        // Перший стовпець — пустий заголовок для рядкових заголовків
+        const thEmpty = document.createElement("th");
+        thEmpty.setAttribute("scope", "col");
+        thEmpty.textContent = "";
+        trHead1.appendChild(thEmpty);
+
+        // Дні
+        for (let d = 1; d <= data.days; d++) {
+          const th = document.createElement("th");
+          th.setAttribute("scope", "col");
+          th.textContent = d;
+          trHead1.appendChild(th);
+        }
+        thead.appendChild(trHead1);
+
+        // Другий ряд — дні тижня (можна обчислити за датою; тут для прикладу використано просте чергування)
+        const trHead2 = document.createElement("tr");
+        const thLabel = document.createElement("th");
+        thLabel.textContent = "";
+        trHead2.appendChild(thLabel);
+
+        // Для короткості: припустимо що 1-е число місяця — неділя. Ви можете отримати реальні дні через Date().
+        // Приклад генерації днів тижня (більш точно — використайте new Date(2026, monthIndex, d).getDay())
+        for (let d = 1; d <= data.days; d++) {
+          const th = document.createElement("th");
+          // Тут просто приклад: використайте реальні значення при генерації
+          th.innerHTML =
+            '<abbr title="' +
+            dayNames[(d - 1) % 7] +
+            '">' +
+            dayNames[(d - 1) % 7] +
+            "</abbr>";
+          trHead2.appendChild(th);
+        }
+        thead.appendChild(trHead2);
+        table.appendChild(thead);
+
+        const tbody = document.createElement("tbody");
+        // Для кожної групи (A, Б...)
+        for (const rowName of Object.keys(data.rows)) {
+          const tr = document.createElement("tr");
+          const thRow = document.createElement("th");
+          thRow.setAttribute("scope", "row");
+          thRow.textContent = rowName;
+          tr.appendChild(thRow);
+
+          const cells = data.rows[rowName];
+          for (let i = 0; i < data.days; i++) {
+            const td = document.createElement("td");
+            const val = cells[i] ?? 0;
+            switch (val) {
+              case 1:
+                td.className = "shift-1";
+                td.textContent = "1";
+                break;
+              case 2:
+                td.className = "shift-2";
+                td.textContent = "2";
+                break;
+              case 3:
+                td.className = "shift-3";
+                td.textContent = "3";
+                break;
+              default:
+                td.className = "off";
+                td.textContent = "";
+                break;
+            }
+            tr.appendChild(td);
+          }
+          tbody.appendChild(tr);
+        }
+        table.appendChild(tbody);
+        wrapper.appendChild(table);
+        return wrapper;
+      }
+
+      // Рендеримо всі місяці з даних
+      const container = document.getElementById("calendars");
+      scheduleData.forEach((m) => {
+        container.appendChild(renderMonth(m));
+      });
+
+      // Порада: для точних днів тижня використайте:
+      // new Date(2026, monthIndex, day).getDay()  (monthIndex: 0=січень)
+      // і заповніть dayNames відповідними значеннями
+    </script>
+  </body>
+</html>
