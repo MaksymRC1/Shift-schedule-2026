@@ -64,7 +64,7 @@ body {
   line-height: 1.5;
   transition: background-color 0.3s ease, color 0.3s ease;
   min-height: 100vh;
-  padding-bottom: 40px;
+  padding-bottom: max(40px, env(safe-area-inset-bottom, 40px));
 }
 
 /* Prevent body scrolling when a modal dialog is open */
@@ -79,10 +79,10 @@ body.modal-open {
   top: 0;
   z-index: 100;
   background: rgba(15, 23, 42, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--border-color);
-  padding: 12px 16px;
+  padding: max(12px, env(safe-area-inset-top, 12px)) 16px 12px;
 }
 
 [data-theme="light"] .app-header {
@@ -129,7 +129,7 @@ body.modal-open {
   border: 1px solid var(--border-color);
   border-radius: 10px;
   overflow: hidden;
-  height: 40px;
+  height: 42px;
 }
 
 .btn-nav {
@@ -138,6 +138,7 @@ body.modal-open {
   color: var(--text-primary);
   padding: 0 16px;
   height: 100%;
+  min-width: 44px;
   font-size: 1.1rem;
   cursor: pointer;
   display: flex;
@@ -178,7 +179,7 @@ body.modal-open {
   border: 1px solid var(--border-color);
   color: var(--text-primary);
   padding: 8px 14px;
-  min-height: 40px;
+  min-height: 42px;
   border-radius: 8px;
   font-size: 0.875rem;
   font-weight: 500;
@@ -287,9 +288,10 @@ body.modal-open {
 .shift-filters {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   overflow-x: auto;
   max-width: 100%;
+  padding-bottom: 2px;
 }
 
 .filter-label {
@@ -304,10 +306,10 @@ body.modal-open {
   background: var(--bg-primary);
   border: 1px solid var(--border-color);
   color: var(--text-secondary);
-  padding: 6px 12px;
-  min-height: 36px;
-  border-radius: 6px;
-  font-size: 0.8125rem;
+  padding: 6px 14px;
+  min-height: 38px;
+  border-radius: 8px;
+  font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
@@ -318,48 +320,6 @@ body.modal-open {
   background: var(--accent-color);
   color: #fff;
   border-color: var(--accent-color);
-}
-
-/* Stats Summary Cards */
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.stat-card {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  border-radius: 10px;
-  padding: 10px 14px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.stat-info .stat-label {
-  font-size: 0.7rem;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  font-weight: 600;
-}
-
-.stat-info .stat-value {
-  font-size: 1.15rem;
-  font-weight: 700;
-  margin-top: 2px;
-}
-
-.stat-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1rem;
 }
 
 /* Calendar Grid & Table */
@@ -379,7 +339,7 @@ body.modal-open {
 
 .month-header {
   background: var(--bg-secondary);
-  padding: 10px 16px;
+  padding: 12px 16px;
   border-bottom: 1px solid var(--border-color);
   display: flex;
   align-items: center;
@@ -402,25 +362,29 @@ body.modal-open {
   position: relative;
   max-width: 100%;
   -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
 }
 
 .calendar-table {
   width: 100%;
-  border-collapse: collapse;
-  min-width: 720px;
-  font-size: 0.85rem;
+  border-collapse: separate;
+  border-spacing: 0;
+  min-width: 740px;
+  font-size: 0.875rem;
   text-align: center;
 }
 
 .calendar-table th, .calendar-table td {
-  border: 1px solid var(--border-color);
-  padding: 4px 2px;
-  height: 40px;
+  border-right: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+  padding: 6px 4px;
+  height: 44px;
+  min-width: 44px;
   vertical-align: middle;
   position: relative;
 }
 
-/* Sticky first column for Shift Labels */
+/* Sticky first column for Shift Labels with elevation shadow */
 .calendar-table th:first-child,
 .calendar-table td:first-child {
   position: sticky;
@@ -428,9 +392,10 @@ body.modal-open {
   z-index: 10;
   background: var(--bg-secondary);
   font-weight: 700;
-  width: 44px;
-  min-width: 44px;
+  width: 48px;
+  min-width: 48px;
   border-right: 2px solid var(--border-color);
+  box-shadow: 2px 0 6px rgba(0, 0, 0, 0.15);
 }
 
 .calendar-table th {
@@ -438,6 +403,7 @@ body.modal-open {
   color: var(--text-secondary);
   font-weight: 600;
   font-size: 0.75rem;
+  top: 0;
 }
 
 .calendar-table th.is-weekend {
@@ -454,7 +420,7 @@ body.modal-open {
 
 .cell-day:active {
   filter: brightness(1.2);
-  transform: scale(0.96);
+  transform: scale(0.95);
 }
 
 .cell-shift-1 {
@@ -486,14 +452,16 @@ body.modal-open {
 
 .cell-today {
   box-shadow: inset 0 0 0 2px var(--today-border);
+  position: relative;
+  z-index: 2;
 }
 
 .note-dot {
   position: absolute;
-  top: 2px;
-  right: 2px;
-  width: 6px;
-  height: 6px;
+  top: 4px;
+  right: 4px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   background: #ec4899;
 }
@@ -502,10 +470,11 @@ body.modal-open {
   font-size: 0.6rem;
   display: block;
   line-height: 1;
-  margin-top: 1px;
+  margin-top: 2px;
+  font-weight: 600;
 }
 
-/* Modal Dialog & Mobile Drawer */
+/* Modal Dialog & Mobile Bottom Sheet Drawer */
 .modal-backdrop {
   position: fixed;
   top: 0;
@@ -513,8 +482,8 @@ body.modal-open {
   width: 100vw;
   height: 100vh;
   background: rgba(0, 0, 0, 0.65);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   z-index: 1000;
   display: flex;
   align-items: center;
@@ -539,11 +508,18 @@ body.modal-open {
   padding: 20px;
   box-shadow: var(--shadow);
   transform: translateY(20px);
-  transition: transform 0.25s ease;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 .modal-backdrop.active .modal-card {
   transform: translateY(0);
+}
+
+.drawer-handle {
+  display: none; /* Hidden on desktop */
 }
 
 .modal-header {
@@ -562,10 +538,15 @@ body.modal-open {
   background: transparent;
   border: none;
   color: var(--text-secondary);
-  font-size: 1.5rem;
+  font-size: 1.75rem;
   cursor: pointer;
   line-height: 1;
   padding: 4px 8px;
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .modal-body {
@@ -590,9 +571,9 @@ body.modal-open {
   background: var(--bg-primary);
   border: 1px solid var(--border-color);
   border-radius: 8px;
-  padding: 10px 12px;
+  padding: 12px 14px;
   color: var(--text-primary);
-  font-size: 0.95rem;
+  font-size: 1rem; /* 16px minimum prevents iOS zoom! */
   font-family: inherit;
 }
 
@@ -605,50 +586,29 @@ body.modal-open {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 8px;
+  gap: 10px;
   margin-top: 20px;
-}
-
-/* User Statistics List */
-.user-stats-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.user-stat-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 12px;
-  background: var(--bg-primary);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  font-size: 0.9rem;
-}
-
-.user-stat-row .stat-name {
-  color: var(--text-secondary);
-  font-weight: 500;
-}
-
-.user-stat-row .stat-val {
-  font-weight: 700;
-  color: var(--text-primary);
+  flex-wrap: wrap;
 }
 
 /* Star Rating Component */
 .star-rating {
   display: flex;
-  gap: 8px;
-  font-size: 1.6rem;
+  gap: 12px;
+  font-size: 1.8rem;
   cursor: pointer;
   user-select: none;
+  padding: 4px 0;
 }
 
 .star-rating span {
   color: var(--border-color);
   transition: color 0.15s ease, transform 0.15s ease;
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .star-rating span:hover, .star-rating span.active {
@@ -661,7 +621,7 @@ body.modal-open {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 12px;
+  padding: 16px;
   background: #ffffff;
   border-radius: 16px;
   margin: 10px 0;
@@ -670,14 +630,14 @@ body.modal-open {
 /* Toast Notifications */
 .toast-notification {
   position: fixed;
-  bottom: 24px;
+  bottom: max(24px, env(safe-area-inset-bottom, 24px));
   right: 24px;
   z-index: 2000;
   background: var(--accent-color);
   color: #ffffff;
-  padding: 12px 20px;
-  border-radius: 10px;
-  font-size: 0.9rem;
+  padding: 14px 22px;
+  border-radius: 12px;
+  font-size: 0.95rem;
   font-weight: 600;
   box-shadow: var(--shadow);
   opacity: 0;
@@ -696,46 +656,89 @@ body.modal-open {
   .header-container {
     flex-direction: column;
     align-items: stretch;
-    gap: 10px;
+    gap: 12px;
   }
   .controls-bar {
     justify-content: space-between;
+    gap: 8px;
   }
-  .action-buttons {
+  .year-selector {
     width: 100%;
     justify-content: space-between;
   }
-  .btn-action {
+  .year-display {
     flex: 1;
+  }
+  .action-buttons {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  .btn-action {
+    width: 100%;
+    padding: 10px 12px;
   }
   .toolbar-section {
     flex-direction: column;
     align-items: stretch;
+    padding: 14px 12px;
   }
   .legend {
     justify-content: center;
+    gap: 8px;
   }
   .shift-filters {
-    justify-content: center;
+    justify-content: flex-start;
     width: 100%;
+    padding-bottom: 6px;
+  }
+  .btn-filter {
+    flex: 1;
+    text-align: center;
   }
 
-  /* Modal Bottom Drawer on Mobile */
+  /* Modal Bottom Sheet Drawer on Mobile */
   .modal-backdrop {
     align-items: flex-end;
     padding: 0;
   }
 
   .modal-card {
-    border-radius: 20px 20px 0 0;
+    border-radius: 24px 24px 0 0;
     max-width: 100%;
     transform: translateY(100%);
-    max-height: 90vh;
-    overflow-y: auto;
+    max-height: 88vh;
+    padding: 20px 16px max(24px, env(safe-area-inset-bottom, 24px)) 16px;
+    border-bottom: none;
   }
 
   .modal-backdrop.active .modal-card {
     transform: translateY(0);
+  }
+
+  .drawer-handle {
+    display: block;
+    width: 40px;
+    height: 5px;
+    border-radius: 3px;
+    background: var(--border-color);
+    margin: -8px auto 16px auto;
+  }
+
+  .modal-footer {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .modal-footer .btn-action {
+    width: 100%;
+  }
+
+  .toast-notification {
+    left: 16px;
+    right: 16px;
+    text-align: center;
   }
 }
 

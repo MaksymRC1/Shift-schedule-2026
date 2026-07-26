@@ -1,4 +1,4 @@
-const CACHE_NAME = 'shift-schedule-cache-v2';
+const CACHE_NAME = 'shift-schedule-cache-v3';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -33,7 +33,7 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Fetch Event - Stale-While-Revalidate with API Exclusions
+// Fetch Event - Stale-While-Revalidate with API Exclusions and Navigation Fallback
 self.addEventListener('fetch', (event) => {
   const url = event.request.url;
 
@@ -53,7 +53,14 @@ self.addEventListener('fetch', (event) => {
           }
           return networkResponse;
         }).catch(() => {
-          return cachedResponse;
+          if (cachedResponse) {
+            return cachedResponse;
+          }
+          // If offline and requesting a page navigation, return cached index.html
+          if (event.request.mode === 'navigate') {
+            return cache.match('./index.html');
+          }
+          return new Response('Offline', { status: 503, statusText: 'Service Unavailable' });
         });
 
         return cachedResponse || fetchPromise;

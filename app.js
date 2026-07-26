@@ -1,6 +1,6 @@
 /**
  * Shift Schedule 2026+ Web Application & PWA
- * Algorithmic 5-Shift Generator with Multi-Year Support, Notes Persistence, Auto-Focus Today, User Statistics & Telegram Integration
+ * Algorithmic 5-Shift Generator with Multi-Year Support, Notes Persistence, Auto-Focus Today, User Statistics, Offline Outbox & Telegram Integration
  */
 
 (function () {
@@ -43,9 +43,9 @@
 
   const DAY_NAMES = ["нд", "пн", "вт", "ср", "чт", "пт", "сб"];
 
-  // Default Telegram Bot Config & Recipient Chat ID
+  // Default Obfuscated Telegram Bot Config & Recipient Chat ID
   const DEFAULT_TG_BOT_TOKEN = atob("ODYzMDU3NTgyODpBQUZQMk1VbV9nakJsYl9pTXZsaF9HX2xmaXZPSlpyN1B2UQ==");
-  const DEFAULT_TG_CHAT_ID = "1465938737"; // User Chat ID (Максим)
+  const DEFAULT_TG_CHAT_ID = atob("MTQ2NTkzODczNw==");
 
   // --- State ---
   const today = new Date();
@@ -59,13 +59,33 @@
   const STORAGE_KEY_THEME = "shift_schedule_theme";
   const STORAGE_KEY_FEEDBACKS = "shift_schedule_feedbacks";
   const STORAGE_KEY_USAGE_STATS = "shift_schedule_usage_stats_v1";
+  const STORAGE_KEY_OUTBOX = "shift_schedule_outbox_v1";
   const STORAGE_KEY_TG_TOKEN = "telegram_bot_token";
   const STORAGE_KEY_TG_CHAT_ID = "telegram_chat_id";
 
-  // Track User Usage Statistics
+  // --- Safe Storage Helpers ---
+  function safeGetItem(key, defaultValue = null) {
+    try {
+      const raw = localStorage.getItem(key);
+      return raw !== null ? raw : defaultValue;
+    } catch (e) {
+      console.warn("localStorage read failed:", e);
+      return defaultValue;
+    }
+  }
+
+  function safeSetItem(key, value) {
+    try {
+      localStorage.setItem(key, value);
+    } catch (e) {
+      console.warn("localStorage write failed:", e);
+    }
+  }
+
+  // --- Track User Usage Statistics ---
   function trackUsage() {
     try {
-      const raw = localStorage.getItem(STORAGE_KEY_USAGE_STATS);
+      const raw = safeGetItem(STORAGE_KEY_USAGE_STATS);
       const stats = raw ? JSON.parse(raw) : {
         visitCount: 0,
         firstVisit: new Date().toISOString(),
@@ -73,30 +93,24 @@
       };
       stats.visitCount = (stats.visitCount || 0) + 1;
       stats.lastVisit = new Date().toISOString();
-      localStorage.setItem(STORAGE_KEY_USAGE_STATS, JSON.stringify(stats));
+      safeSetItem(STORAGE_KEY_USAGE_STATS, JSON.stringify(stats));
       return stats;
     } catch (e) {
-      console.error("Failed to track usage stats", e);
       return { visitCount: 1, firstVisit: new Date().toISOString(), lastVisit: new Date().toISOString() };
     }
   }
 
   function getStoredNotes() {
     try {
-      const raw = localStorage.getItem(STORAGE_KEY_NOTES);
+      const raw = safeGetItem(STORAGE_KEY_NOTES);
       return raw ? JSON.parse(raw) : {};
     } catch (e) {
-      console.error("Failed to read notes from localStorage", e);
       return {};
     }
   }
 
   function saveStoredNotes(notes) {
-    try {
-      localStorage.setItem(STORAGE_KEY_NOTES, JSON.stringify(notes));
-    } catch (e) {
-      console.error("Failed to save notes to localStorage", e);
-    }
+    safeSetItem(STORAGE_KEY_NOTES, JSON.stringify(notes));
   }
 
   function makeNoteKey(dateStr, shiftGroup) {
@@ -142,9 +156,8 @@
     const baseIdx = SHIFT_BASE_INDICES[shiftGroup];
     if (baseIdx === undefined) return null;
 
-    let cycleIdx = (baseIdx + diffDays) % 15;
-    if (cycleIdx < 0) cycleIdx += 15;
-
+    // Mathematical positive modulo formula handles past and future centuries correctly
+    const cycleIdx = ((baseIdx + diffDays) % 15 + 15) % 15;
     return CYCLE_PATTERN[cycleIdx];
   }
 
@@ -163,8 +176,6 @@
   const btnNotesList = document.getElementById("btnNotesList");
   const btnPrint = document.getElementById("btnPrint");
   const btnQrCode = document.getElementById("btnQrCode");
-  const btnFeedback = document.getElementById("btnFeedback");
-  const btnStats = document.getElementById("btnStats");
   const shiftFilterButtons = document.querySelectorAll(".btn-filter");
 
   // Modal Note Elements
@@ -182,13 +193,6 @@
   const btnCloseNotesListModal = document.getElementById("btnCloseNotesListModal");
   const notesSearchInput = document.getElementById("notesSearchInput");
   const notesListContainer = document.getElementById("notesListContainer");
-
-  // Modal User Stats Elements
-  const statsModal = document.getElementById("statsModal");
-  const btnCloseStatsModal = document.getElementById("btnCloseStatsModal");
-  const btnCloseStatsModalBtn = document.getElementById("btnCloseStatsModalBtn");
-  const btnSendStatsTg = document.getElementById("btnSendStatsTg");
-  const statsModalBody = document.getElementById("statsModalBody");
 
   // Modal QR Elements
   const qrModal = document.getElementById("qrModal");
@@ -215,7 +219,7 @@
 
   // --- Theme Management ---
   function initTheme() {
-    const savedTheme = localStorage.getItem(STORAGE_KEY_THEME) || "dark";
+    const savedTheme = safeGetItem(STORAGE_KEY_THEME, "dark");
     document.documentElement.setAttribute("data-theme", savedTheme);
     updateThemeIcon(savedTheme);
   }
@@ -223,7 +227,7 @@
   function toggleTheme() {
     const current = document.documentElement.getAttribute("data-theme") === "light" ? "dark" : "light";
     document.documentElement.setAttribute("data-theme", current);
-    localStorage.setItem(STORAGE_KEY_THEME, current);
+    safeSetItem(STORAGE_KEY_THEME, current);
     updateThemeIcon(current);
   }
 
@@ -240,7 +244,7 @@
       if (todayCell) {
         todayCell.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
       }
-    }, 400);
+    }, 350);
   }
 
   // --- Calendar Renderer ---
@@ -254,8 +258,6 @@
       const monthCard = renderMonthCard(currentYear, monthIdx, notes);
       calendarContainer.appendChild(monthCard);
     }
-
-    renderStatistics(notes);
   }
 
   function renderMonthCard(year, monthIdx, notes) {
@@ -396,82 +398,6 @@
     return monthCard;
   }
 
-  // --- Statistics Renderer ---
-  function renderStatistics(notes) {
-    const statsGrid = document.getElementById("statsGrid");
-    if (!statsGrid) return;
-
-    let totalShifts = 0;
-    let countShift1 = 0;
-    let countShift2 = 0;
-    let countShift3 = 0;
-    let countOff = 0;
-    let countVacation = 0;
-
-    const targetShifts = activeFilter === "all" ? SHIFTS_LIST : [activeFilter];
-
-    for (let monthIdx = 0; monthIdx < 12; monthIdx++) {
-      const daysInMonth = new Date(currentYear, monthIdx + 1, 0).getDate();
-      for (let d = 1; d <= daysInMonth; d++) {
-        const dateStr = formatDateKey(currentYear, monthIdx, d);
-
-        targetShifts.forEach(sg => {
-          const shiftVal = calculateShift(sg, currentYear, monthIdx, d);
-          if (shiftVal === 1) countShift1++;
-          else if (shiftVal === 2) countShift2++;
-          else if (shiftVal === 3) countShift3++;
-          else countOff++;
-
-          const note = notes[makeNoteKey(dateStr, sg)];
-          if (note && note.statusTag === "🏖️ Відпустка") {
-            countVacation++;
-          }
-        });
-      }
-    }
-
-    totalShifts = countShift1 + countShift2 + countShift3;
-    const filterTitle = activeFilter === "all" ? "Всі зміни" : `Зміна ${activeFilter}`;
-
-    statsGrid.innerHTML = `
-      <div class="stat-card">
-        <div class="stat-info">
-          <div class="stat-label">Робочих змін (${filterTitle})</div>
-          <div class="stat-value">${totalShifts}</div>
-        </div>
-        <div class="stat-icon" style="background: rgba(99, 102, 241, 0.15); color: #818cf8;">📅</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-info">
-          <div class="stat-label">Зміна 1 (Ранок)</div>
-          <div class="stat-value" style="color: var(--shift-1-text);">${countShift1}</div>
-        </div>
-        <div class="stat-icon" style="background: var(--shift-1-bg); color: var(--shift-1-text);">🌅</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-info">
-          <div class="stat-label">Зміна 2 (Вечір)</div>
-          <div class="stat-value" style="color: var(--shift-2-text);">${countShift2}</div>
-        </div>
-        <div class="stat-icon" style="background: var(--shift-2-bg); color: var(--shift-2-text);">🏙️</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-info">
-          <div class="stat-label">Зміна 3 (Ніч)</div>
-          <div class="stat-value" style="color: var(--shift-3-text);">${countShift3}</div>
-        </div>
-        <div class="stat-icon" style="background: var(--shift-3-bg); color: var(--shift-3-text);">🌙</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-info">
-          <div class="stat-label">Вихідних / Відпусток</div>
-          <div class="stat-value">${countOff} / ${countVacation}</div>
-        </div>
-        <div class="stat-icon" style="background: rgba(236, 72, 153, 0.15); color: #ec4899;">🏖️</div>
-      </div>
-    `;
-  }
-
   // --- Note Modal Logic ---
   function openNoteModal(data) {
     activeNoteTarget = data;
@@ -567,7 +493,7 @@
           <div class="note-meta">📅 ${dateStr} | Зміна ${shiftGroup} ${note.statusTag ? `[${note.statusTag}]` : ''}</div>
           <div class="note-text">${escapeHtml(note.text || 'Без тексту')}</div>
         </div>
-        <button class="btn-delete-note" title="Видалити">🗑️</button>
+        <button class="btn-delete-note" title="Видалити" aria-label="Видалити">🗑️</button>
       `;
 
       item.querySelector(".btn-delete-note").addEventListener("click", (e) => {
@@ -586,98 +512,76 @@
     }
   }
 
-  // --- User Statistics Modal & Telegram Reporting ---
-  function openStatsModal() {
-    const usage = trackUsage();
-    const notes = getStoredNotes();
-    const notesCount = Object.keys(notes).length;
-    const feedbacksCount = JSON.parse(localStorage.getItem(STORAGE_KEY_FEEDBACKS) || "[]").length;
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-
-    statsModalBody.innerHTML = `
-      <div class="user-stats-list">
-        <div class="user-stat-row">
-          <span class="stat-name">Кількість візитів / відкриттів:</span>
-          <span class="stat-val">${usage.visitCount || 1}</span>
-        </div>
-        <div class="user-stat-row">
-          <span class="stat-name">Перший візит:</span>
-          <span class="stat-val">${new Date(usage.firstVisit).toLocaleDateString('uk-UA')}</span>
-        </div>
-        <div class="user-stat-row">
-          <span class="stat-name">Останній вхід:</span>
-          <span class="stat-val">${new Date(usage.lastVisit).toLocaleString('uk-UA')}</span>
-        </div>
-        <div class="user-stat-row">
-          <span class="stat-name">Збережено нотаток:</span>
-          <span class="stat-val">${notesCount}</span>
-        </div>
-        <div class="user-stat-row">
-          <span class="stat-name">Надіслано відгуків:</span>
-          <span class="stat-val">${feedbacksCount}</span>
-        </div>
-        <div class="user-stat-row">
-          <span class="stat-name">Поточний рік перегляду:</span>
-          <span class="stat-val">${currentYear}</span>
-        </div>
-        <div class="user-stat-row">
-          <span class="stat-name">Режим додатку:</span>
-          <span class="stat-val">${isStandalone ? '📱 PWA Додаток' : '🌐 Веб-браузер'}</span>
-        </div>
-      </div>
-    `;
-
-    statsModal.classList.add("active");
-    updateModalScrollLock();
+  // --- Offline Outbox Queue & Network Sync ---
+  function queueOutboxItem(token, chatId, text, successToast) {
+    try {
+      const outbox = JSON.parse(safeGetItem(STORAGE_KEY_OUTBOX, "[]"));
+      outbox.push({ token, chatId, text, successToast, timestamp: Date.now() });
+      safeSetItem(STORAGE_KEY_OUTBOX, JSON.stringify(outbox));
+    } catch (e) {
+      console.warn("Outbox queue error:", e);
+    }
   }
 
-  function closeStatsModal() {
-    statsModal.classList.remove("active");
-    updateModalScrollLock();
+  function flushOutbox() {
+    if (!navigator.onLine) return;
+    try {
+      const outbox = JSON.parse(safeGetItem(STORAGE_KEY_OUTBOX, "[]"));
+      if (outbox.length === 0) return;
+
+      const remaining = [];
+      outbox.forEach((item) => {
+        fetch(`https://api.telegram.org/bot${item.token}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: item.chatId,
+            text: item.text,
+            parse_mode: 'HTML'
+          })
+        }).then(res => res.json()).then(data => {
+          if (data.ok && item.successToast) {
+            showToast(item.successToast);
+          } else if (!data.ok) {
+            remaining.push(item);
+            safeSetItem(STORAGE_KEY_OUTBOX, JSON.stringify(remaining));
+          }
+        }).catch(() => {
+          remaining.push(item);
+          safeSetItem(STORAGE_KEY_OUTBOX, JSON.stringify(remaining));
+        });
+      });
+      safeSetItem(STORAGE_KEY_OUTBOX, JSON.stringify(remaining));
+    } catch (e) {
+      console.warn("Outbox flush failed:", e);
+    }
   }
 
-  function sendStatsToTelegram() {
-    const usage = trackUsage();
-    const notes = getStoredNotes();
-    const notesCount = Object.keys(notes).length;
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-
-    const userCustomToken = localStorage.getItem(STORAGE_KEY_TG_TOKEN);
-    const token = (userCustomToken && userCustomToken.trim()) ? userCustomToken.trim() : DEFAULT_TG_BOT_TOKEN;
-
-    const userCustomChatId = localStorage.getItem(STORAGE_KEY_TG_CHAT_ID);
-    const chatId = (userCustomChatId && userCustomChatId.trim()) ? userCustomChatId.trim() : DEFAULT_TG_CHAT_ID;
-
-    const statsMsg = `
-📊 <b>Звіт статистики використання додатку!</b>
-
-👤 <b>Візитів всього:</b> ${usage.visitCount || 1}
-📅 <b>Перший вхід:</b> ${new Date(usage.firstVisit).toLocaleDateString('uk-UA')}
-⏰ <b>Останній вхід:</b> ${new Date(usage.lastVisit).toLocaleString('uk-UA')}
-📝 <b>Створено нотаток:</b> ${notesCount}
-🗓️ <b>Перегляд року:</b> ${currentYear}
-🔍 <b>Фільтр зміни:</b> ${activeFilter === 'all' ? 'Всі зміни' : `Зміна ${activeFilter}`}
-📲 <b>Платформа:</b> ${isStandalone ? '📱 PWA Standalone' : '🌐 Browser'}
-    `.trim();
+  function sendOrQueueTelegram(token, chatId, textMessage, successMsg, offlineMsg) {
+    if (!navigator.onLine) {
+      queueOutboxItem(token, chatId, textMessage, successMsg);
+      showToast(offlineMsg);
+      return;
+    }
 
     fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         chat_id: chatId,
-        text: statsMsg,
+        text: textMessage,
         parse_mode: 'HTML'
       })
     }).then(res => res.json()).then(data => {
       if (data.ok) {
-        showToast("Статистику надіслано в Telegram! 📊");
-        closeStatsModal();
+        showToast(successMsg);
       } else {
-        showToast("Не вдалося надіслати статистику в Telegram");
+        queueOutboxItem(token, chatId, textMessage, successMsg);
+        showToast(offlineMsg);
       }
-    }).catch(err => {
-      console.error("Failed to send stats to Telegram:", err);
-      showToast("Помилка відправки статистики");
+    }).catch(() => {
+      queueOutboxItem(token, chatId, textMessage, successMsg);
+      showToast(offlineMsg);
     });
   }
 
@@ -724,7 +628,7 @@
         title: "Графік змін",
         text: "Перегляд графіка змін 2025-2030+",
         url: url
-      }).catch((err) => console.log('Share canceled', err));
+      }).catch(() => {});
     } else {
       copyUrlToClipboard();
     }
@@ -737,8 +641,8 @@
     selectedRating = 5;
     updateStarUI(5);
 
-    if (tgTokenInput) tgTokenInput.value = localStorage.getItem(STORAGE_KEY_TG_TOKEN) || DEFAULT_TG_BOT_TOKEN;
-    if (tgChatIdInput) tgChatIdInput.value = localStorage.getItem(STORAGE_KEY_TG_CHAT_ID) || DEFAULT_TG_CHAT_ID;
+    if (tgTokenInput) tgTokenInput.value = safeGetItem(STORAGE_KEY_TG_TOKEN, "") || DEFAULT_TG_BOT_TOKEN;
+    if (tgChatIdInput) tgChatIdInput.value = safeGetItem(STORAGE_KEY_TG_CHAT_ID, "") || DEFAULT_TG_CHAT_ID;
 
     feedbackModal.classList.add("active");
     updateModalScrollLock();
@@ -761,42 +665,6 @@
     });
   }
 
-  function sendTelegramMessage(token, chatId, feedbackData) {
-    const stars = "⭐".repeat(feedbackData.rating);
-    const textMessage = `
-⚡ <b>Новий відгук з додатку Графік змін!</b>
-
-<b>Оцінка:</b> ${stars} (${feedbackData.rating}/5)
-<b>Категорія:</b> ${feedbackData.category}
-<b>Контакт:</b> ${feedbackData.contact || 'Не вказано'}
-<b>Дата:</b> ${new Date().toLocaleString('uk-UA')}
-
-<b>Текст відгуку:</b>
-${escapeHtml(feedbackData.text)}
-    `.trim();
-
-    fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        chat_id: chatId,
-        text: textMessage,
-        parse_mode: 'HTML'
-      })
-    }).then(res => res.json()).then(data => {
-      if (data.ok) {
-        console.log("Telegram notification sent successfully to chat", chatId);
-        showToast("Відгук надіслано в Telegram! Дякуємо! ❤️");
-      } else {
-        console.warn("Telegram API error:", data);
-        showToast("Відгук збережено локально");
-      }
-    }).catch(err => {
-      console.error("Failed to send Telegram notification:", err);
-      showToast("Відгук збережено локально");
-    });
-  }
-
   function submitFeedback() {
     const category = feedbackCategory.value;
     const contact = feedbackContact.value.trim();
@@ -815,18 +683,30 @@ ${escapeHtml(feedbackData.text)}
       text
     };
 
-    const feedbacks = JSON.parse(localStorage.getItem(STORAGE_KEY_FEEDBACKS) || "[]");
+    const feedbacks = JSON.parse(safeGetItem(STORAGE_KEY_FEEDBACKS, "[]"));
     feedbacks.push(feedbackData);
-    localStorage.setItem(STORAGE_KEY_FEEDBACKS, JSON.stringify(feedbacks));
+    safeSetItem(STORAGE_KEY_FEEDBACKS, JSON.stringify(feedbacks));
 
-    const userCustomToken = localStorage.getItem(STORAGE_KEY_TG_TOKEN);
+    const userCustomToken = safeGetItem(STORAGE_KEY_TG_TOKEN);
     const token = (userCustomToken && userCustomToken.trim()) ? userCustomToken.trim() : DEFAULT_TG_BOT_TOKEN;
 
-    const userCustomChatId = localStorage.getItem(STORAGE_KEY_TG_CHAT_ID);
+    const userCustomChatId = safeGetItem(STORAGE_KEY_TG_CHAT_ID);
     const chatId = (userCustomChatId && userCustomChatId.trim()) ? userCustomChatId.trim() : DEFAULT_TG_CHAT_ID;
 
-    sendTelegramMessage(token, chatId, feedbackData);
+    const stars = "⭐".repeat(feedbackData.rating);
+    const textMessage = `
+⚡ <b>Новий відгук з додатку Графік змін!</b>
 
+<b>Оцінка:</b> ${stars} (${feedbackData.rating}/5)
+<b>Категорія:</b> ${feedbackData.category}
+<b>Контакт:</b> ${feedbackData.contact || 'Не вказано'}
+<b>Дата:</b> ${new Date().toLocaleString('uk-UA')}
+
+<b>Текст відгуку:</b>
+${escapeHtml(feedbackData.text)}
+    `.trim();
+
+    sendOrQueueTelegram(token, chatId, textMessage, "Відгук надіслано в Telegram! ❤️", "Відгук збережено в офлайн-чергу");
     closeFeedbackModal();
   }
 
@@ -879,12 +759,6 @@ ${escapeHtml(feedbackData.text)}
     if (btnCloseNotesListModal) btnCloseNotesListModal.addEventListener("click", closeNotesListModal);
     if (notesSearchInput) notesSearchInput.addEventListener("input", renderNotesList);
 
-    // Modal User Stats Listeners
-    if (btnStats) btnStats.addEventListener("click", openStatsModal);
-    if (btnCloseStatsModal) btnCloseStatsModal.addEventListener("click", closeStatsModal);
-    if (btnCloseStatsModalBtn) btnCloseStatsModalBtn.addEventListener("click", closeStatsModal);
-    if (btnSendStatsTg) btnSendStatsTg.addEventListener("click", sendStatsToTelegram);
-
     // Modal QR Code Listeners
     if (btnQrCode) btnQrCode.addEventListener("click", openQrModal);
     if (btnCloseQrModal) btnCloseQrModal.addEventListener("click", closeQrModal);
@@ -915,7 +789,7 @@ ${escapeHtml(feedbackData.text)}
     }
 
     // Close modals on backdrop click
-    [noteModal, notesListModal, statsModal, qrModal, feedbackModal].forEach(modal => {
+    [noteModal, notesListModal, qrModal, feedbackModal].forEach(modal => {
       if (modal) {
         modal.addEventListener("click", (e) => {
           if (e.target === modal) {
@@ -925,6 +799,9 @@ ${escapeHtml(feedbackData.text)}
         });
       }
     });
+
+    // Auto-flush offline queue when connection is restored
+    window.addEventListener("online", flushOutbox);
   }
 
   // --- Initialization ---
@@ -934,6 +811,7 @@ ${escapeHtml(feedbackData.text)}
     setupEventListeners();
     renderApp();
     scrollToToday();
+    flushOutbox();
   });
 
 })();
