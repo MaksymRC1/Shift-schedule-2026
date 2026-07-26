@@ -6,12 +6,24 @@
 (function () {
   'use strict';
 
-  // --- Register PWA Service Worker ---
+  // --- Register PWA Service Worker with Auto Update ---
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('./sw.js')
         .then((reg) => {
-          console.log('Service Worker registered successfully with scope:', reg.scope);
+          console.log('Service Worker registered with scope:', reg.scope);
+          // Check for updates
+          reg.onupdatefound = () => {
+            const installingWorker = reg.installing;
+            if (installingWorker) {
+              installingWorker.onstatechange = () => {
+                if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                  console.log('New Service Worker content available; refreshing...');
+                  window.location.reload();
+                }
+              };
+            }
+          };
         })
         .catch((err) => {
           console.warn('Service Worker registration failed:', err);
@@ -611,7 +623,7 @@
   function sendTelegramMessage(token, chatId, feedbackData) {
     const stars = "⭐".repeat(feedbackData.rating);
     const textMessage = `
-⚡ <b>Новий відгук з сайту Графік змін!</b>
+⚡ <b>Новий відгук з додатку Графік змін!</b>
 
 <b>Оцінка:</b> ${stars} (${feedbackData.rating}/5)
 <b>Категорія:</b> ${feedbackData.category}
@@ -667,10 +679,12 @@ ${escapeHtml(feedbackData.text)}
     feedbacks.push(feedbackData);
     localStorage.setItem(STORAGE_KEY_FEEDBACKS, JSON.stringify(feedbacks));
 
-    const userCustomToken = localStorage.getItem(STORAGE_KEY_TG_TOKEN) || (tgTokenInput ? tgTokenInput.value.trim() : "");
-    const token = userCustomToken || DEFAULT_TG_BOT_TOKEN;
-    const userCustomChatId = localStorage.getItem(STORAGE_KEY_TG_CHAT_ID) || (tgChatIdInput ? tgChatIdInput.value.trim() : "");
-    const chatId = userCustomChatId || DEFAULT_TG_CHAT_ID;
+    // Ensure token & chatId always fallback to DEFAULT_TG_BOT_TOKEN and DEFAULT_TG_CHAT_ID (1465938737)
+    const userCustomToken = localStorage.getItem(STORAGE_KEY_TG_TOKEN);
+    const token = (userCustomToken && userCustomToken.trim()) ? userCustomToken.trim() : DEFAULT_TG_BOT_TOKEN;
+
+    const userCustomChatId = localStorage.getItem(STORAGE_KEY_TG_CHAT_ID);
+    const chatId = (userCustomChatId && userCustomChatId.trim()) ? userCustomChatId.trim() : DEFAULT_TG_CHAT_ID;
 
     sendTelegramMessage(token, chatId, feedbackData);
 
