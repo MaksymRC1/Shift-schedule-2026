@@ -32,9 +32,9 @@
 
   const DAY_NAMES = ["нд", "пн", "вт", "ср", "чт", "пт", "сб"];
 
-  // Obfuscated Telegram Bot Token
+  // Default Telegram Bot Config & Recipient Chat ID (Hardcoded for instant feedback)
   const DEFAULT_TG_BOT_TOKEN = atob("ODYzMDU3NTgyODpBQUZQMk1VbV9nakJsYl9pTXZsaF9HX2xmaXZPSlpyN1B2UQ==");
-  const DEFAULT_TG_BOT_USERNAME = "@sunpp_shift_schedule_support_bot";
+  const DEFAULT_TG_CHAT_ID = "1465938737"; // User Chat ID (Максим)
 
   // --- State ---
   const today = new Date();
@@ -586,8 +586,8 @@
     selectedRating = 5;
     updateStarUI(5);
 
-    if (tgTokenInput) tgTokenInput.value = localStorage.getItem(STORAGE_KEY_TG_TOKEN) || "";
-    if (tgChatIdInput) tgChatIdInput.value = localStorage.getItem(STORAGE_KEY_TG_CHAT_ID) || "";
+    if (tgTokenInput) tgTokenInput.value = localStorage.getItem(STORAGE_KEY_TG_TOKEN) || DEFAULT_TG_BOT_TOKEN;
+    if (tgChatIdInput) tgChatIdInput.value = localStorage.getItem(STORAGE_KEY_TG_CHAT_ID) || DEFAULT_TG_CHAT_ID;
 
     feedbackModal.classList.add("active");
   }
@@ -606,46 +606,6 @@
         s.classList.remove("active");
       }
     });
-  }
-
-  async function resolveChatIdAndSend(token, feedbackData) {
-    let chatId = (tgChatIdInput ? tgChatIdInput.value.trim() : "") || localStorage.getItem(STORAGE_KEY_TG_CHAT_ID);
-
-    if (tgTokenInput && tgTokenInput.value.trim()) localStorage.setItem(STORAGE_KEY_TG_TOKEN, tgTokenInput.value.trim());
-
-    // Auto-discover Chat ID from getUpdates if not set yet
-    if (!chatId) {
-      try {
-        const updatesRes = await fetch(`https://api.telegram.org/bot${token}/getUpdates`);
-        const updatesData = await updatesRes.json();
-        if (updatesData.ok && updatesData.result && updatesData.result.length > 0) {
-          for (let i = updatesData.result.length - 1; i >= 0; i--) {
-            const upd = updatesData.result[i];
-            const msg = upd.message || upd.channel_post || upd.my_chat_member;
-            if (msg && msg.chat && msg.chat.id) {
-              chatId = String(msg.chat.id);
-              localStorage.setItem(STORAGE_KEY_TG_CHAT_ID, chatId);
-              if (tgChatIdInput) tgChatIdInput.value = chatId;
-              break;
-            }
-          }
-        }
-      } catch (err) {
-        console.error("Failed to auto-discover Chat ID:", err);
-      }
-    }
-
-    if (chatId && tgChatIdInput && tgChatIdInput.value.trim()) {
-      localStorage.setItem(STORAGE_KEY_TG_CHAT_ID, tgChatIdInput.value.trim());
-    }
-
-    if (!chatId) {
-      console.warn(`Telegram Chat ID not found. Please send a message or /start to ${DEFAULT_TG_BOT_USERNAME} in Telegram.`);
-      showToast(`Напишіть будь-яке повідомлення чи /start боту ${DEFAULT_TG_BOT_USERNAME} в Telegram для активації`, 5000);
-      return;
-    }
-
-    sendTelegramMessage(token, chatId, feedbackData);
   }
 
   function sendTelegramMessage(token, chatId, feedbackData) {
@@ -676,9 +636,11 @@ ${escapeHtml(feedbackData.text)}
         showToast("Відгук надіслано в Telegram! Дякуємо! ❤️");
       } else {
         console.warn("Telegram API error:", data);
+        showToast("Відгук збережено локально");
       }
     }).catch(err => {
       console.error("Failed to send Telegram notification:", err);
+      showToast("Відгук збережено локально");
     });
   }
 
@@ -707,10 +669,12 @@ ${escapeHtml(feedbackData.text)}
 
     const userCustomToken = localStorage.getItem(STORAGE_KEY_TG_TOKEN) || (tgTokenInput ? tgTokenInput.value.trim() : "");
     const token = userCustomToken || DEFAULT_TG_BOT_TOKEN;
-    resolveChatIdAndSend(token, feedbackData);
+    const userCustomChatId = localStorage.getItem(STORAGE_KEY_TG_CHAT_ID) || (tgChatIdInput ? tgChatIdInput.value.trim() : "");
+    const chatId = userCustomChatId || DEFAULT_TG_CHAT_ID;
+
+    sendTelegramMessage(token, chatId, feedbackData);
 
     closeFeedbackModal();
-    showToast("Дякуємо за ваш відгук! ❤️");
   }
 
   function escapeHtml(str) {
