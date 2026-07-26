@@ -67,6 +67,12 @@ body {
   padding-bottom: 40px;
 }
 
+/* Prevent body scrolling when a modal dialog is open */
+body.modal-open {
+  overflow: hidden !important;
+  touch-action: none;
+}
+
 /* App Header & Navbar */
 .app-header {
   position: sticky;
@@ -130,9 +136,9 @@ body {
   background: transparent;
   border: none;
   color: var(--text-primary);
-  padding: 0 14px;
+  padding: 0 16px;
   height: 100%;
-  font-size: 1rem;
+  font-size: 1.1rem;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -146,46 +152,18 @@ body {
 
 .year-display {
   padding: 0 10px;
-  font-size: 1.05rem;
+  font-size: 1.1rem;
   font-weight: 700;
   border: none;
   background: transparent;
   color: var(--text-primary);
   text-align: center;
-  width: 75px;
+  width: 80px;
   height: 100%;
 }
 
 .year-display:focus {
   outline: none;
-}
-
-.quick-years {
-  display: flex;
-  gap: 4px;
-  overflow-x: auto;
-  max-width: 100%;
-  padding-bottom: 2px;
-}
-
-.btn-year {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  color: var(--text-secondary);
-  padding: 8px 12px;
-  min-height: 40px;
-  border-radius: 8px;
-  font-size: 0.875rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  white-space: nowrap;
-}
-
-.btn-year:hover, .btn-year.active {
-  background: var(--accent-color);
-  color: #fff;
-  border-color: var(--accent-color);
 }
 
 .action-buttons {
@@ -629,6 +607,34 @@ body {
   justify-content: flex-end;
   gap: 8px;
   margin-top: 20px;
+}
+
+/* User Statistics List */
+.user-stats-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.user-stat-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+.user-stat-row .stat-name {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.user-stat-row .stat-val {
+  font-weight: 700;
+  color: var(--text-primary);
 }
 
 /* Star Rating Component */

@@ -1,6 +1,6 @@
 /**
  * Shift Schedule 2026+ Web Application & PWA
- * Algorithmic 5-Shift Generator with Multi-Year Support, Notes Persistence, QR Code Sharing, Telegram Feedback & Offline PWA Capabilities
+ * Algorithmic 5-Shift Generator with Multi-Year Support, Notes Persistence, Auto-Focus Today, User Statistics & Telegram Integration
  */
 
 (function () {
@@ -12,7 +12,6 @@
       navigator.serviceWorker.register('./sw.js')
         .then((reg) => {
           console.log('Service Worker registered with scope:', reg.scope);
-          // Check for updates
           reg.onupdatefound = () => {
             const installingWorker = reg.installing;
             if (installingWorker) {
@@ -44,7 +43,7 @@
 
   const DAY_NAMES = ["нд", "пн", "вт", "ср", "чт", "пт", "сб"];
 
-  // Default Telegram Bot Config & Recipient Chat ID (Hardcoded for instant feedback)
+  // Default Telegram Bot Config & Recipient Chat ID
   const DEFAULT_TG_BOT_TOKEN = atob("ODYzMDU3NTgyODpBQUZQMk1VbV9nakJsYl9pTXZsaF9HX2xmaXZPSlpyN1B2UQ==");
   const DEFAULT_TG_CHAT_ID = "1465938737"; // User Chat ID (Максим)
 
@@ -59,8 +58,28 @@
   const STORAGE_KEY_NOTES = "shift_schedule_notes_v2";
   const STORAGE_KEY_THEME = "shift_schedule_theme";
   const STORAGE_KEY_FEEDBACKS = "shift_schedule_feedbacks";
+  const STORAGE_KEY_USAGE_STATS = "shift_schedule_usage_stats_v1";
   const STORAGE_KEY_TG_TOKEN = "telegram_bot_token";
   const STORAGE_KEY_TG_CHAT_ID = "telegram_chat_id";
+
+  // Track User Usage Statistics
+  function trackUsage() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY_USAGE_STATS);
+      const stats = raw ? JSON.parse(raw) : {
+        visitCount: 0,
+        firstVisit: new Date().toISOString(),
+        lastVisit: new Date().toISOString()
+      };
+      stats.visitCount = (stats.visitCount || 0) + 1;
+      stats.lastVisit = new Date().toISOString();
+      localStorage.setItem(STORAGE_KEY_USAGE_STATS, JSON.stringify(stats));
+      return stats;
+    } catch (e) {
+      console.error("Failed to track usage stats", e);
+      return { visitCount: 1, firstVisit: new Date().toISOString(), lastVisit: new Date().toISOString() };
+    }
+  }
 
   function getStoredNotes() {
     try {
@@ -93,6 +112,16 @@
       notes[key] = noteData;
     }
     saveStoredNotes(notes);
+  }
+
+  // --- Modal Scroll-Lock Helper ---
+  function updateModalScrollLock() {
+    const activeModals = document.querySelectorAll(".modal-backdrop.active");
+    if (activeModals.length > 0) {
+      document.body.classList.add("modal-open");
+    } else {
+      document.body.classList.remove("modal-open");
+    }
   }
 
   // --- Toast Notifications ---
@@ -135,8 +164,8 @@
   const btnPrint = document.getElementById("btnPrint");
   const btnQrCode = document.getElementById("btnQrCode");
   const btnFeedback = document.getElementById("btnFeedback");
+  const btnStats = document.getElementById("btnStats");
   const shiftFilterButtons = document.querySelectorAll(".btn-filter");
-  const quickYearButtons = document.querySelectorAll(".btn-year");
 
   // Modal Note Elements
   const noteModal = document.getElementById("noteModal");
@@ -153,6 +182,13 @@
   const btnCloseNotesListModal = document.getElementById("btnCloseNotesListModal");
   const notesSearchInput = document.getElementById("notesSearchInput");
   const notesListContainer = document.getElementById("notesListContainer");
+
+  // Modal User Stats Elements
+  const statsModal = document.getElementById("statsModal");
+  const btnCloseStatsModal = document.getElementById("btnCloseStatsModal");
+  const btnCloseStatsModalBtn = document.getElementById("btnCloseStatsModalBtn");
+  const btnSendStatsTg = document.getElementById("btnSendStatsTg");
+  const statsModalBody = document.getElementById("statsModalBody");
 
   // Modal QR Elements
   const qrModal = document.getElementById("qrModal");
@@ -197,17 +233,19 @@
     }
   }
 
+  // --- Auto Scroll & Focus to Today's Date ---
+  function scrollToToday() {
+    setTimeout(() => {
+      const todayCell = document.querySelector(".cell-today");
+      if (todayCell) {
+        todayCell.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
+      }
+    }, 400);
+  }
+
   // --- Calendar Renderer ---
   function renderApp() {
     yearInput.value = currentYear;
-
-    quickYearButtons.forEach(btn => {
-      if (parseInt(btn.dataset.year) === currentYear) {
-        btn.classList.add("active");
-      } else {
-        btn.classList.remove("active");
-      }
-    });
 
     calendarContainer.innerHTML = "";
     const notes = getStoredNotes();
@@ -449,11 +487,13 @@
     }
 
     noteModal.classList.add("active");
+    updateModalScrollLock();
   }
 
   function closeNoteModal() {
     noteModal.classList.remove("active");
     activeNoteTarget = null;
+    updateModalScrollLock();
   }
 
   function handleSaveNote() {
@@ -489,10 +529,12 @@
   function openNotesListModal() {
     renderNotesList();
     notesListModal.classList.add("active");
+    updateModalScrollLock();
   }
 
   function closeNotesListModal() {
     notesListModal.classList.remove("active");
+    updateModalScrollLock();
   }
 
   function renderNotesList() {
@@ -544,6 +586,101 @@
     }
   }
 
+  // --- User Statistics Modal & Telegram Reporting ---
+  function openStatsModal() {
+    const usage = trackUsage();
+    const notes = getStoredNotes();
+    const notesCount = Object.keys(notes).length;
+    const feedbacksCount = JSON.parse(localStorage.getItem(STORAGE_KEY_FEEDBACKS) || "[]").length;
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+
+    statsModalBody.innerHTML = `
+      <div class="user-stats-list">
+        <div class="user-stat-row">
+          <span class="stat-name">Кількість візитів / відкриттів:</span>
+          <span class="stat-val">${usage.visitCount || 1}</span>
+        </div>
+        <div class="user-stat-row">
+          <span class="stat-name">Перший візит:</span>
+          <span class="stat-val">${new Date(usage.firstVisit).toLocaleDateString('uk-UA')}</span>
+        </div>
+        <div class="user-stat-row">
+          <span class="stat-name">Останній вхід:</span>
+          <span class="stat-val">${new Date(usage.lastVisit).toLocaleString('uk-UA')}</span>
+        </div>
+        <div class="user-stat-row">
+          <span class="stat-name">Збережено нотаток:</span>
+          <span class="stat-val">${notesCount}</span>
+        </div>
+        <div class="user-stat-row">
+          <span class="stat-name">Надіслано відгуків:</span>
+          <span class="stat-val">${feedbacksCount}</span>
+        </div>
+        <div class="user-stat-row">
+          <span class="stat-name">Поточний рік перегляду:</span>
+          <span class="stat-val">${currentYear}</span>
+        </div>
+        <div class="user-stat-row">
+          <span class="stat-name">Режим додатку:</span>
+          <span class="stat-val">${isStandalone ? '📱 PWA Додаток' : '🌐 Веб-браузер'}</span>
+        </div>
+      </div>
+    `;
+
+    statsModal.classList.add("active");
+    updateModalScrollLock();
+  }
+
+  function closeStatsModal() {
+    statsModal.classList.remove("active");
+    updateModalScrollLock();
+  }
+
+  function sendStatsToTelegram() {
+    const usage = trackUsage();
+    const notes = getStoredNotes();
+    const notesCount = Object.keys(notes).length;
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+
+    const userCustomToken = localStorage.getItem(STORAGE_KEY_TG_TOKEN);
+    const token = (userCustomToken && userCustomToken.trim()) ? userCustomToken.trim() : DEFAULT_TG_BOT_TOKEN;
+
+    const userCustomChatId = localStorage.getItem(STORAGE_KEY_TG_CHAT_ID);
+    const chatId = (userCustomChatId && userCustomChatId.trim()) ? userCustomChatId.trim() : DEFAULT_TG_CHAT_ID;
+
+    const statsMsg = `
+📊 <b>Звіт статистики використання додатку!</b>
+
+👤 <b>Візитів всього:</b> ${usage.visitCount || 1}
+📅 <b>Перший вхід:</b> ${new Date(usage.firstVisit).toLocaleDateString('uk-UA')}
+⏰ <b>Останній вхід:</b> ${new Date(usage.lastVisit).toLocaleString('uk-UA')}
+📝 <b>Створено нотаток:</b> ${notesCount}
+🗓️ <b>Перегляд року:</b> ${currentYear}
+🔍 <b>Фільтр зміни:</b> ${activeFilter === 'all' ? 'Всі зміни' : `Зміна ${activeFilter}`}
+📲 <b>Платформа:</b> ${isStandalone ? '📱 PWA Standalone' : '🌐 Browser'}
+    `.trim();
+
+    fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text: statsMsg,
+        parse_mode: 'HTML'
+      })
+    }).then(res => res.json()).then(data => {
+      if (data.ok) {
+        showToast("Статистику надіслано в Telegram! 📊");
+        closeStatsModal();
+      } else {
+        showToast("Не вдалося надіслати статистику в Telegram");
+      }
+    }).catch(err => {
+      console.error("Failed to send stats to Telegram:", err);
+      showToast("Помилка відправки статистики");
+    });
+  }
+
   // --- QR Code Modal Logic ---
   function openQrModal() {
     const currentUrl = window.location.href;
@@ -553,10 +690,12 @@
     qrImage.src = qrApiUrl;
 
     qrModal.classList.add("active");
+    updateModalScrollLock();
   }
 
   function closeQrModal() {
     qrModal.classList.remove("active");
+    updateModalScrollLock();
   }
 
   function copyUrlToClipboard() {
@@ -602,10 +741,12 @@
     if (tgChatIdInput) tgChatIdInput.value = localStorage.getItem(STORAGE_KEY_TG_CHAT_ID) || DEFAULT_TG_CHAT_ID;
 
     feedbackModal.classList.add("active");
+    updateModalScrollLock();
   }
 
   function closeFeedbackModal() {
     feedbackModal.classList.remove("active");
+    updateModalScrollLock();
   }
 
   function updateStarUI(rating) {
@@ -674,12 +815,10 @@ ${escapeHtml(feedbackData.text)}
       text
     };
 
-    // Save locally
     const feedbacks = JSON.parse(localStorage.getItem(STORAGE_KEY_FEEDBACKS) || "[]");
     feedbacks.push(feedbackData);
     localStorage.setItem(STORAGE_KEY_FEEDBACKS, JSON.stringify(feedbacks));
 
-    // Ensure token & chatId always fallback to DEFAULT_TG_BOT_TOKEN and DEFAULT_TG_CHAT_ID (1465938737)
     const userCustomToken = localStorage.getItem(STORAGE_KEY_TG_TOKEN);
     const token = (userCustomToken && userCustomToken.trim()) ? userCustomToken.trim() : DEFAULT_TG_BOT_TOKEN;
 
@@ -717,13 +856,6 @@ ${escapeHtml(feedbackData.text)}
       }
     });
 
-    quickYearButtons.forEach(btn => {
-      btn.addEventListener("click", () => {
-        currentYear = parseInt(btn.dataset.year);
-        renderApp();
-      });
-    });
-
     shiftFilterButtons.forEach(btn => {
       btn.addEventListener("click", () => {
         shiftFilterButtons.forEach(b => b.classList.remove("active"));
@@ -746,6 +878,12 @@ ${escapeHtml(feedbackData.text)}
     if (btnNotesList) btnNotesList.addEventListener("click", openNotesListModal);
     if (btnCloseNotesListModal) btnCloseNotesListModal.addEventListener("click", closeNotesListModal);
     if (notesSearchInput) notesSearchInput.addEventListener("input", renderNotesList);
+
+    // Modal User Stats Listeners
+    if (btnStats) btnStats.addEventListener("click", openStatsModal);
+    if (btnCloseStatsModal) btnCloseStatsModal.addEventListener("click", closeStatsModal);
+    if (btnCloseStatsModalBtn) btnCloseStatsModalBtn.addEventListener("click", closeStatsModal);
+    if (btnSendStatsTg) btnSendStatsTg.addEventListener("click", sendStatsToTelegram);
 
     // Modal QR Code Listeners
     if (btnQrCode) btnQrCode.addEventListener("click", openQrModal);
@@ -777,11 +915,12 @@ ${escapeHtml(feedbackData.text)}
     }
 
     // Close modals on backdrop click
-    [noteModal, notesListModal, qrModal, feedbackModal].forEach(modal => {
+    [noteModal, notesListModal, statsModal, qrModal, feedbackModal].forEach(modal => {
       if (modal) {
         modal.addEventListener("click", (e) => {
           if (e.target === modal) {
             modal.classList.remove("active");
+            updateModalScrollLock();
           }
         });
       }
@@ -790,9 +929,11 @@ ${escapeHtml(feedbackData.text)}
 
   // --- Initialization ---
   document.addEventListener("DOMContentLoaded", () => {
+    trackUsage();
     initTheme();
     setupEventListeners();
     renderApp();
+    scrollToToday();
   });
 
 })();

@@ -29,26 +29,16 @@
         </div>
 
         <div class="controls-bar">
-          <!-- Year Selector -->
+          <!-- Year Selector (Only Arrow Controls) -->
           <div class="year-selector">
             <button id="btnPrevYear" class="btn-nav" title="Попередній рік">◀</button>
             <input type="number" id="yearInput" class="year-display" min="1900" max="2100" value="2026" />
             <button id="btnNextYear" class="btn-nav" title="Наступний рік">▶</button>
           </div>
 
-          <!-- Quick Year Selector -->
-          <div class="quick-years">
-            <button class="btn-year" data-year="2025">2025</button>
-            <button class="btn-year active" data-year="2026">2026</button>
-            <button class="btn-year" data-year="2027">2027</button>
-            <button class="btn-year" data-year="2028">2028</button>
-            <button class="btn-year" data-year="2029">2029</button>
-            <button class="btn-year" data-year="3029" style="display:none;"></button>
-            <button class="btn-year" data-year="2030">2030</button>
-          </div>
-
           <!-- Action Buttons -->
           <div class="action-buttons">
+            <button id="btnStats" class="btn-action">📊 Статистика</button>
             <button id="btnQrCode" class="btn-action">📲 QR-код</button>
             <button id="btnFeedback" class="btn-action">💬 Відгук</button>
             <button id="btnNotesList" class="btn-action">📝 Нотатки</button>
@@ -154,6 +144,23 @@
             placeholder="🔍 Пошук по нотаткам, датам, змінам..."
           />
           <div id="notesListContainer" class="notes-list-container"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal: User Statistics -->
+    <div id="statsModal" class="modal-backdrop">
+      <div class="modal-card" style="max-width: 480px;">
+        <div class="modal-header">
+          <h2 class="modal-title">📊 Статистика використання</h2>
+          <button id="btnCloseStatsModal" class="btn-close">&times;</button>
+        </div>
+        <div class="modal-body" id="statsModalBody">
+          <!-- Dynamically populated stats details -->
+        </div>
+        <div class="modal-footer">
+          <button id="btnCloseStatsModalBtn" class="btn-action">Закрити</button>
+          <button id="btnSendStatsTg" class="btn-action btn-primary">📲 Надіслати в Telegram</button>
         </div>
       </div>
     </div>
