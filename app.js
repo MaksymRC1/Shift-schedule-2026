@@ -1,6 +1,6 @@
 /**
  * Shift Schedule 2026+ Web Application & PWA
- * Algorithmic 5-Shift Generator with Multi-Year Support, Notes Persistence, QR Code Sharing, Feedback & Offline PWA Capabilities
+ * Algorithmic 5-Shift Generator with Multi-Year Support, Notes Persistence, QR Code Sharing, Telegram Feedback & Offline PWA Capabilities
  */
 
 (function () {
@@ -39,10 +39,12 @@
   let activeNoteTarget = null; // { dateKey, shiftGroup, year, month, day, shift }
   let selectedRating = 5;
 
-  // --- Storage Helper ---
+  // --- Storage Keys ---
   const STORAGE_KEY_NOTES = "shift_schedule_notes_v2";
   const STORAGE_KEY_THEME = "shift_schedule_theme";
   const STORAGE_KEY_FEEDBACKS = "shift_schedule_feedbacks";
+  const STORAGE_KEY_TG_TOKEN = "telegram_bot_token";
+  const STORAGE_KEY_TG_CHAT_ID = "telegram_chat_id";
 
   function getStoredNotes() {
     try {
@@ -78,7 +80,7 @@
   }
 
   // --- Toast Notifications ---
-  function showToast(message, duration = 3000) {
+  function showToast(message, duration = 3500) {
     const toast = document.getElementById("toastNotification");
     if (!toast) return;
     toast.textContent = message;
@@ -153,6 +155,12 @@
   const feedbackCategory = document.getElementById("feedbackCategory");
   const feedbackContact = document.getElementById("feedbackContact");
   const feedbackText = document.getElementById("feedbackText");
+
+  // Telegram Config UI Elements
+  const tgTokenInput = document.getElementById("tgTokenInput");
+  const tgChatIdInput = document.getElementById("tgChatIdInput");
+  const btnToggleTgSettings = document.getElementById("btnToggleTgSettings");
+  const tgSettingsPanel = document.getElementById("tgSettingsPanel");
 
   // --- Theme Management ---
   function initTheme() {
@@ -526,7 +534,6 @@
     const currentUrl = window.location.href;
     qrUrlInput.value = currentUrl;
 
-    // Use QR Code API to generate QR Code SVG/PNG
     const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(currentUrl)}&margin=10`;
     qrImage.src = qrApiUrl;
 
@@ -569,12 +576,17 @@
     }
   }
 
-  // --- Feedback Modal Logic ---
+  // --- Feedback & Telegram Bot Handler ---
   function openFeedbackModal() {
     feedbackText.value = "";
     feedbackContact.value = "";
     selectedRating = 5;
     updateStarUI(5);
+
+    // Populate Telegram settings inputs from localStorage if present
+    if (tgTokenInput) tgTokenInput.value = localStorage.getItem(STORAGE_KEY_TG_TOKEN) || "";
+    if (tgChatIdInput) tgChatIdInput.value = localStorage.getItem(STORAGE_KEY_TG_CHAT_ID) || "";
+
     feedbackModal.classList.add("active");
   }
 
@@ -594,6 +606,51 @@
     });
   }
 
+  function sendTelegramNotification(feedbackData) {
+    const token = (tgTokenInput ? tgTokenInput.value.trim() : "") || localStorage.getItem(STORAGE_KEY_TG_TOKEN);
+    const chatId = (tgChatIdInput ? tgChatIdInput.value.trim() : "") || localStorage.getItem(STORAGE_KEY_TG_CHAT_ID);
+
+    // Save tokens in localStorage if provided
+    if (tgTokenInput && tgTokenInput.value.trim()) localStorage.setItem(STORAGE_KEY_TG_TOKEN, tgTokenInput.value.trim());
+    if (tgChatIdInput && tgChatIdInput.value.trim()) localStorage.setItem(STORAGE_KEY_TG_CHAT_ID, tgChatIdInput.value.trim());
+
+    if (!token || !chatId) {
+      console.log("Telegram Bot Token or Chat ID not configured. Feedback saved locally.");
+      return;
+    }
+
+    const stars = "⭐".repeat(feedbackData.rating);
+    const textMessage = `
+⚡ <b>Новий відгук з сайту Графік змін!</b>
+
+<b>Оцінка:</b> ${stars} (${feedbackData.rating}/5)
+<b>Категорія:</b> ${feedbackData.category}
+<b>Контакт:</b> ${feedbackData.contact || 'Не вказано'}
+<b>Дата:</b> ${new Date().toLocaleString('uk-UA')}
+
+<b>Текст відгуку:</b>
+${escapeHtml(feedbackData.text)}
+    `.trim();
+
+    fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text: textMessage,
+        parse_mode: 'HTML'
+      })
+    }).then(res => res.json()).then(data => {
+      if (data.ok) {
+        console.log("Telegram notification sent successfully!");
+      } else {
+        console.warn("Telegram API error:", data);
+      }
+    }).catch(err => {
+      console.error("Failed to send Telegram notification:", err);
+    });
+  }
+
   function submitFeedback() {
     const category = feedbackCategory.value;
     const contact = feedbackContact.value.trim();
@@ -604,16 +661,21 @@
       return;
     }
 
-    // Save locally
-    const feedbacks = JSON.parse(localStorage.getItem(STORAGE_KEY_FEEDBACKS) || "[]");
-    feedbacks.push({
+    const feedbackData = {
       date: new Date().toISOString(),
       rating: selectedRating,
       category,
       contact,
       text
-    });
+    };
+
+    // Save locally in localStorage
+    const feedbacks = JSON.parse(localStorage.getItem(STORAGE_KEY_FEEDBACKS) || "[]");
+    feedbacks.push(feedbackData);
     localStorage.setItem(STORAGE_KEY_FEEDBACKS, JSON.stringify(feedbacks));
+
+    // Send to Telegram Bot if Token/ChatID configured
+    sendTelegramNotification(feedbackData);
 
     closeFeedbackModal();
     showToast("Дякуємо за ваш відгук! ❤️");
@@ -686,6 +748,13 @@
     if (btnCloseFeedbackModal) btnCloseFeedbackModal.addEventListener("click", closeFeedbackModal);
     if (btnCancelFeedback) btnCancelFeedback.addEventListener("click", closeFeedbackModal);
     if (btnSubmitFeedback) btnSubmitFeedback.addEventListener("click", submitFeedback);
+
+    if (btnToggleTgSettings && tgSettingsPanel) {
+      btnToggleTgSettings.addEventListener("click", () => {
+        const isHidden = tgSettingsPanel.style.display === "none" || !tgSettingsPanel.style.display;
+        tgSettingsPanel.style.display = isHidden ? "flex" : "none";
+      });
+    }
 
     if (starRating) {
       const stars = starRating.querySelectorAll("span");

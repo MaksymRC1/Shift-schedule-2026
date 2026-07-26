@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
     <meta
       name="description"
-      content="Інтерактивний календар та графік змін для 5 змін (А, Б, В, Г, Д) з нотатками, QR-кодом, зворотним зв'язком та офлайн PWA доступом."
+      content="Інтерактивний календар та графік змін для 5 змін (А, Б, В, Г, Д) з нотатками, QR-кодом, зворотним зв'язком у Telegram та офлайн PWA доступом."
     />
 
     <!-- PWA Settings & Icons -->
@@ -43,6 +43,7 @@
             <button class="btn-year" data-year="2027">2027</button>
             <button class="btn-year" data-year="2028">2028</button>
             <button class="btn-year" data-year="2029">2029</button>
+            <button class="btn-year" data-year="3029" style="display:none;"></button>
             <button class="btn-year" data-year="2030">2030</button>
           </div>
 
@@ -210,12 +211,27 @@
             </select>
           </div>
           <div class="form-group">
-            <label class="form-label" for="feedbackContact">Ваш контакт / E-mail (необов'язково):</label>
-            <input type="text" id="feedbackContact" class="form-input" placeholder="example@email.com або @telegram" />
+            <label class="form-label" for="feedbackContact">Ваш контакт / E-mail / Telegram (необов'язково):</label>
+            <input type="text" id="feedbackContact" class="form-input" placeholder="example@email.com або @username" />
           </div>
           <div class="form-group">
             <label class="form-label" for="feedbackText">Повідомлення:</label>
             <textarea id="feedbackText" class="form-textarea" rows="4" placeholder="Опишіть ваші враження, пропозиції або зауваження..."></textarea>
+          </div>
+
+          <!-- Optional Collapsible Telegram Bot Settings for Admin -->
+          <button id="btnToggleTgSettings" type="button" class="btn-action" style="font-size: 0.75rem; padding: 4px 8px; align-self: flex-start; margin-top: 4px;">
+            ⚙️ Налаштувати Telegram Bot
+          </button>
+          <div id="tgSettingsPanel" style="display: none; flex-direction: column; gap: 8px; background: var(--bg-primary); padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); margin-top: 6px;">
+            <div class="form-group">
+              <label class="form-label" style="font-size: 0.75rem;">Telegram Bot Token:</label>
+              <input type="text" id="tgTokenInput" class="form-input" style="font-size: 0.8rem; padding: 6px 8px;" placeholder="123456789:ABCdefGHIjklMNOpqrs..." />
+            </div>
+            <div class="form-group">
+              <label class="form-label" style="font-size: 0.75rem;">Telegram Chat ID:</label>
+              <input type="text" id="tgChatIdInput" class="form-input" style="font-size: 0.8rem; padding: 6px 8px;" placeholder="123456789 або -100123456789" />
+            </div>
           </div>
         </div>
         <div class="modal-footer">
