@@ -26,6 +26,13 @@
       <div class="header-container">
         <div class="title-group">
           <h1>⚡ Графік змін</h1>
+          <button id="btnThemeToggle" class="theme-toggle-modern" aria-label="Перемикач теми" title="Змінити тему" role="switch" aria-checked="false">
+            <span class="toggle-track">
+              <span class="toggle-icon sun">☀️</span>
+              <span class="toggle-icon moon">🌙</span>
+              <span class="toggle-thumb"></span>
+            </span>
+          </button>
         </div>
 
         <div class="controls-bar">
@@ -36,13 +43,13 @@
             <button id="btnNextYear" class="btn-nav" title="Наступний рік" aria-label="Наступний рік">▶</button>
           </div>
 
-          <!-- Action Buttons -->
-          <div class="action-buttons">
-            <button id="btnQrCode" class="btn-action">📲 QR-код</button>
-            <button id="btnFeedback" class="btn-action">💬 Відгук</button>
-            <button id="btnNotesList" class="btn-action">📝 Нотатки</button>
-            <button id="btnThemeToggle" class="btn-action">☀️ Тема</button>
-            <button id="btnPrint" class="btn-action btn-primary">🖨️ Друк</button>
+          <!-- Action Buttons (Mobile Bottom Navigation Menu) -->
+          <div class="action-buttons" role="navigation" aria-label="Головне меню">
+            <button id="btnNotesList" class="btn-action"><span class="nav-icon">📝</span><span class="nav-text">Нотатки</span></button>
+            <button id="btnStats" class="btn-action"><span class="nav-icon">📊</span><span class="nav-text">Статистика</span></button>
+            <button id="btnQrCode" class="btn-action"><span class="nav-icon">📲</span><span class="nav-text">QR-код</span></button>
+            <button id="btnFeedback" class="btn-action"><span class="nav-icon">💬</span><span class="nav-text">Відгук</span></button>
+            <button id="btnPrint" class="btn-action btn-primary"><span class="nav-icon">🖨️</span><span class="nav-text">Друк</span></button>
           </div>
         </div>
       </div>
@@ -87,6 +94,34 @@
       <!-- Calendar Months Grid -->
       <section id="calendarContainer" class="months-grid" aria-label="Календар змін"></section>
     </main>
+
+    <!-- Modal: Mobile Month Calendar Drawer (For Mobile View) -->
+    <div id="monthModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="monthModalTitle">
+      <div class="modal-card month-modal-card">
+        <div class="drawer-handle"></div>
+        <div class="modal-header">
+          <div class="month-modal-title-group">
+            <h2 id="monthModalTitle" class="modal-title">Місяць</h2>
+            <span id="monthModalSubtitle" class="month-meta"></span>
+          </div>
+          <button id="btnCloseMonthModal" class="btn-close" aria-label="Закрити">&times;</button>
+        </div>
+        <div class="month-modal-controls">
+          <button id="btnPrevMonthModal" class="btn-action btn-month-nav" title="Попередній місяць" aria-label="Попередній місяць">◀ Попередній</button>
+          <button id="btnNextMonthModal" class="btn-action btn-month-nav" title="Наступний місяць" aria-label="Наступний місяць">Наступний ▶</button>
+        </div>
+        <div class="modal-body month-modal-body">
+          <div id="monthModalTableContainer" class="table-wrapper"></div>
+        </div>
+        <div class="modal-footer month-modal-footer">
+          <div class="month-modal-hint">
+            <span class="legend-color note-badge" style="display:inline-block; vertical-align:middle; margin-right:6px;"></span>
+            <span style="font-size:0.8rem; color:var(--text-secondary);">Натисніть на день, щоб додати нотатку</span>
+          </div>
+          <button id="btnDoneMonthModal" class="btn-action btn-primary">Готово</button>
+        </div>
+      </div>
+    </div>
 
     <!-- Modal: Add / Edit Note -->
     <div id="noteModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modalDateTitle">
@@ -228,6 +263,22 @@
         <div class="modal-footer">
           <button id="btnCancelFeedback" class="btn-action">Скасувати</button>
           <button id="btnSubmitFeedback" class="btn-action btn-primary">Надіслати відгук</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal: Statistics Drawer -->
+    <div id="statsModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="statsModalTitle">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h2 id="statsModalTitle" class="modal-title">📊 Статистика використання</h2>
+          <button id="btnCloseStatsModal" class="btn-close" aria-label="Закрити">&times;</button>
+        </div>
+        <div class="modal-body" id="statsModalContent">
+          <!-- Populated dynamically by JS -->
+        </div>
+        <div class="modal-footer">
+          <button id="btnDoneStatsModal" class="btn-action btn-primary">Готово</button>
         </div>
       </div>
     </div>

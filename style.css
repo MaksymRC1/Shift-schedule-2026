@@ -114,6 +114,96 @@ body.modal-open {
   -webkit-text-fill-color: transparent;
 }
 
+/* Modern Pill Theme Toggle Switch */
+.theme-toggle-modern {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 2px;
+  display: inline-flex;
+  align-items: center;
+  outline: none;
+  border-radius: 30px;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  margin-left: 8px;
+}
+
+.theme-toggle-modern:hover {
+  transform: scale(1.05);
+}
+
+.theme-toggle-modern:active {
+  transform: scale(0.95);
+}
+
+.toggle-track {
+  position: relative;
+  width: 58px;
+  height: 30px;
+  background: linear-gradient(135deg, #1e293b, #0f172a);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 6px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4), 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: background 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+[data-theme="light"] .toggle-track {
+  background: linear-gradient(135deg, #38bdf8, #0284c7);
+  border-color: rgba(0, 0, 0, 0.1);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(56, 189, 248, 0.3);
+}
+
+.toggle-icon {
+  font-size: 0.85rem;
+  line-height: 1;
+  z-index: 1;
+  user-select: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.toggle-icon.sun {
+  opacity: 0.4;
+  transform: scale(0.8);
+}
+
+.toggle-icon.moon {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+[data-theme="light"] .toggle-icon.sun {
+  opacity: 1;
+  transform: scale(1.1) rotate(15deg);
+}
+
+[data-theme="light"] .toggle-icon.moon {
+  opacity: 0.4;
+  transform: scale(0.8);
+}
+
+.toggle-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 24px;
+  height: 24px;
+  background: linear-gradient(135deg, #ffffff, #f1f5f9);
+  border-radius: 50%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3), 0 0 10px rgba(255, 255, 255, 0.2);
+  transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.26, 1.55), background 0.3s ease;
+  z-index: 2;
+}
+
+[data-theme="light"] .toggle-thumb {
+  transform: translateX(28px);
+  background: linear-gradient(135deg, #fef08a, #fde047);
+  box-shadow: 0 2px 6px rgba(202, 138, 4, 0.4), 0 0 12px rgba(253, 224, 71, 0.6);
+}
+
 /* Control Bar */
 .controls-bar {
   display: flex;
@@ -204,6 +294,14 @@ body.modal-open {
 
 .btn-action.btn-primary:hover {
   background: var(--accent-hover);
+}
+
+.nav-icon {
+  font-size: 1.1rem;
+}
+
+.nav-text {
+  font-size: 0.875rem;
 }
 
 /* Main Content Layout */
@@ -651,8 +749,147 @@ body.modal-open {
   transform: translateY(0);
 }
 
-/* Mobile Specific Optimizations (< 640px) */
-@media (max-width: 640px) {
+/* Mobile Month Tile Styles */
+.month-card.month-card-mobile {
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, border-color 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  background: var(--bg-card);
+}
+
+.month-card.month-card-mobile:hover,
+.month-card.month-card-mobile:focus {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
+  border-color: var(--accent-color);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px -6px rgba(99, 102, 241, 0.25);
+}
+
+.month-card.month-card-mobile .month-header {
+  border-bottom: none;
+  padding: 16px 20px 12px;
+}
+
+.month-card-preview {
+  padding: 0 20px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.preview-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.preview-badge {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.preview-badge.has-notes {
+  border-color: #ec4899;
+  color: #ec4899;
+  background: rgba(236, 72, 153, 0.1);
+}
+
+.mobile-open-prompt {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 12px;
+  border-top: 1px dashed var(--border-color);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--accent-color);
+  transition: color 0.2s ease;
+}
+
+.month-card.month-card-mobile:hover .mobile-open-prompt,
+.month-card.month-card-mobile:focus .mobile-open-prompt {
+  color: #818cf8;
+}
+
+.mobile-open-prompt .open-arrow {
+  font-size: 1.1rem;
+  transition: transform 0.2s ease;
+}
+
+.month-card.month-card-mobile:hover .open-arrow,
+.month-card.month-card-mobile:focus .open-arrow {
+  transform: translate(3px, -3px);
+}
+
+/* Month Modal Styling */
+#monthModal {
+  z-index: 1050;
+}
+
+#noteModal, #notesListModal, #qrModal, #feedbackModal {
+  z-index: 1100;
+}
+
+.month-modal-card {
+  max-width: 96vw !important;
+  width: 96vw !important;
+  max-height: 92vh !important;
+}
+
+@media (min-width: 769px) {
+  .month-modal-card {
+    max-width: 860px !important;
+    width: 860px !important;
+  }
+}
+
+.month-modal-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.month-modal-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  background: var(--bg-secondary);
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+}
+
+.btn-month-nav {
+  flex: 1;
+  max-width: 180px;
+}
+
+.month-modal-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-top: 16px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Mobile Specific Optimizations (< 768px) */
+@media (max-width: 768px) {
   .header-container {
     flex-direction: column;
     align-items: stretch;
@@ -669,16 +906,68 @@ body.modal-open {
   .year-display {
     flex: 1;
   }
+
+  .title-group {
+    width: 100%;
+    justify-content: space-between;
+  }
+
   .action-buttons {
-    width: 100%;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 1000 !important;
+    background: var(--bg-secondary) !important;
+    border-top: 1px solid var(--border-color) !important;
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-around !important;
+    padding: 6px 4px max(8px, env(safe-area-inset-bottom, 8px)) 4px !important;
+    box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.2) !important;
+    width: auto !important;
+    grid-template-columns: none !important;
+    gap: 0 !important;
   }
-  .btn-action {
-    width: 100%;
-    padding: 10px 12px;
+
+  .action-buttons .btn-action {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    flex-direction: column !important;
+    gap: 2px !important;
+    padding: 4px 2px !important;
+    min-height: auto !important;
+    width: auto !important;
+    border-radius: 6px !important;
+    color: var(--text-secondary) !important;
   }
+
+  .action-buttons .btn-action:hover,
+  .action-buttons .btn-action:active {
+    color: var(--accent-color) !important;
+    background: rgba(99, 102, 241, 0.08) !important;
+  }
+
+  .action-buttons .btn-action .nav-icon {
+    font-size: 1.3rem !important;
+  }
+
+  .action-buttons .btn-action .nav-text {
+    font-size: 0.65rem !important;
+    font-weight: 600 !important;
+  }
+
+  /* Приховуємо кнопку "Друк" на мобільних пристроях у нижньому меню */
+  #btnPrint {
+    display: none !important;
+  }
+
+  /* Додатковий відступ знизу для головного контенту, щоб нижнє меню не перекривало графік */
+  body {
+    padding-bottom: 85px !important;
+  }
+
   .toolbar-section {
     flex-direction: column;
     align-items: stretch;
@@ -765,4 +1054,15 @@ body.modal-open {
   .calendar-table th, .calendar-table td {
     border: 1px solid #999 !important;
   }
+}
+
+@keyframes pulseToday {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(236, 72, 153, 0.7); }
+  50% { transform: scale(1.04); box-shadow: 0 0 0 10px rgba(236, 72, 153, 0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(236, 72, 153, 0); }
+}
+
+.today-highlight-pulse {
+  animation: pulseToday 1.5s ease-in-out 2;
+  z-index: 5 !important;
 }

@@ -6,9 +6,9 @@
 
 const https = require('https');
 
-// Базові налаштування (за замовчуванням використовуються зашифровані токени з проекту)
-const BOT_TOKEN = process.env.TG_BOT_TOKEN || Buffer.from("ODYzMDU3NTgyODpBQUZQMk1VbV9nakJsYl9pTXZsaF9HX2xmaXZPSlpyN1B2UQ==", 'base64').toString('utf8');
-const ADMIN_CHAT_ID = process.env.TG_CHAT_ID || Buffer.from("MTQ2NTkzODczNw==", 'base64').toString('utf8');
+// Базові налаштування (налаштовуються через змінні середовища TG_BOT_TOKEN та TG_CHAT_ID при деплої на Vercel/сервер)
+const BOT_TOKEN = process.env.TG_BOT_TOKEN || "";
+const ADMIN_CHAT_ID = process.env.TG_CHAT_ID || "";
 
 let offset = 0;
 
