@@ -18,138 +18,45 @@
     <link rel="icon" type="image/svg+xml" href="./icons/icon.svg" />
 
     <title>Графік змін | Мультирічний календар PWA</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-    <script id="tailwind-config">
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {
-            "colors": {
-                    "on-primary-fixed": "#07006c",
-                    "surface-container-lowest": "#0d0d16",
-                    "primary-container": "#5d5fef",
-                    "on-surface": "#e4e1ed",
-                    "surface": "#13131b",
-                    "secondary-container": "#414750",
-                    "on-tertiary-container": "#fff6f3",
-                    "on-tertiary-fixed-variant": "#743500",
-                    "on-secondary-fixed-variant": "#414750",
-                    "primary-fixed": "#e1e0ff",
-                    "surface-container-highest": "#34343d",
-                    "surface-variant": "#34343d",
-                    "on-secondary-container": "#b0b5bf",
-                    "on-surface-variant": "#c7c4d7",
-                    "surface-container": "#1f1f27",
-                    "on-background": "#e4e1ed",
-                    "surface-bright": "#393842",
-                    "on-secondary": "#2b3139",
-                    "on-primary-container": "#faf7ff",
-                    "secondary-fixed-dim": "#c1c7d1",
-                    "inverse-surface": "#e4e1ed",
-                    "tertiary": "#ffb689",
-                    "on-primary-fixed-variant": "#2e2bc2",
-                    "tertiary-container": "#b65700",
-                    "on-error": "#690005",
-                    "on-tertiary-fixed": "#321300",
-                    "surface-container-high": "#292932",
-                    "on-tertiary": "#512300",
-                    "secondary": "#c1c7d1",
-                    "tertiary-fixed-dim": "#ffb689",
-                    "inverse-on-surface": "#302f39",
-                    "error": "#ffb4ab",
-                    "on-error-container": "#ffdad6",
-                    "surface-tint": "#c1c1ff",
-                    "primary": "#c1c1ff",
-                    "on-primary": "#1200a9",
-                    "outline-variant": "#464555",
-                    "error-container": "#93000a",
-                    "background": "#13131b",
-                    "outline": "#908fa0",
-                    "primary-fixed-dim": "#c1c1ff",
-                    "secondary-fixed": "#dde3ed",
-                    "surface-container-low": "#1b1b23",
-                    "surface-dim": "#13131b",
-                    "inverse-primary": "#4849da",
-                    "tertiary-fixed": "#ffdbc8",
-                    "on-secondary-fixed": "#161c23"
-            },
-            "borderRadius": {
-                    "DEFAULT": "0.125rem",
-                    "lg": "0.25rem",
-                    "xl": "0.5rem",
-                    "full": "0.75rem"
-            },
-            "spacing": {
-                    "stack-xs": "0.25rem",
-                    "stack-sm": "0.5rem",
-                    "gutter": "1rem",
-                    "margin-page": "2rem",
-                    "grid-cell": "40px",
-                    "stack-md": "1rem"
-            },
-            "fontFamily": {
-                    "display-lg": ["JetBrains Mono"],
-                    "body-base": ["Hanken Grotesk"],
-                    "label-sm": ["JetBrains Mono"],
-                    "headline-md": ["Hanken Grotesk"],
-                    "shift-digit": ["JetBrains Mono"]
-            },
-            "fontSize": {
-                    "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
-                    "body-base": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
-                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
-                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
-                    "shift-digit": ["14px", {"lineHeight": "14px", "fontWeight": "700"}]
-            }
-          },
-        },
-      }
-    </script>
     <link rel="stylesheet" href="style.css" />
   </head>
-  <body class="min-h-screen pb-24">
+  <body>
     <!-- App Header -->
-    <header class="flex justify-between items-center px-gutter py-stack-sm w-full sticky top-0 z-50 bg-surface dark:bg-surface border-b border-outline-variant">
-      <div class="flex items-center gap-3">
-        <span class="material-symbols-outlined text-primary dark:text-primary-fixed-dim" style="font-size: 28px;">bolt</span>
-        <h1 class="font-display-lg text-display-lg-mobile font-bold text-primary dark:text-primary-fixed-dim">ВП ПАЕС</h1>
-      </div>
-      <div class="flex items-center gap-4">
-        <!-- Theme Toggle -->
-        <button id="btnThemeToggle" class="theme-toggle-modern" aria-label="Перемикач теми" title="Змінити тему" role="switch" aria-checked="false" style="margin: 0; scale: 0.85;">
-          <span class="toggle-track">
-            <span class="toggle-icon sun">☀️</span>
-            <span class="toggle-icon moon">🌙</span>
-            <span class="toggle-thumb"></span>
-          </span>
-        </button>
-        <!-- Profile / Setting Avatar -->
-        <div class="w-8 h-8 rounded-full overflow-hidden border border-outline" id="btnProfileNav" style="cursor: pointer;">
-          <img class="w-full h-full object-cover" data-alt="Profile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD_SB44hNYSk9p_AFejbi2mElkLB8XmAdp0SAfAQx7vfzYjXRRUWH81iCA-TogL6HkPtaU96Yl7DZivEfLdTPtNARoKvGJn0CAq9-NOt5NeHRJmv4jzTDETkPD5EL60kRKYy1Mkepd3-uYAYGXKlhGJdu3zGz7uPNYs1q4HctnahFuPrrAjH7UuPsxfJqdQCXwWV_L3_wRlkXYGGlJXkhOKE_KNI97elXxHmX9XWG0Oo_Zcip_t3aD3"/>
+    <header class="app-header">
+      <div class="header-container">
+        <div class="title-group">
+          <h1>⚡ Графік змін</h1>
+          <button id="btnThemeToggle" class="theme-toggle-modern" aria-label="Перемикач теми" title="Змінити тему" role="switch" aria-checked="false">
+            <span class="toggle-track">
+              <span class="toggle-icon sun">☀️</span>
+              <span class="toggle-icon moon">🌙</span>
+              <span class="toggle-thumb"></span>
+            </span>
+          </button>
+        </div>
+
+        <div class="controls-bar">
+          <!-- Year Selector (Only Arrow Controls) -->
+          <div class="year-selector">
+            <button id="btnPrevYear" class="btn-nav" title="Попередній рік" aria-label="Попередній рік">◀</button>
+            <input type="number" id="yearInput" class="year-display" min="1900" max="2100" value="2026" aria-label="Рік" />
+            <button id="btnNextYear" class="btn-nav" title="Наступний рік" aria-label="Наступний рік">▶</button>
+          </div>
+
+          <!-- Action Buttons (Mobile Bottom Navigation Menu) -->
+          <div class="action-buttons" role="navigation" aria-label="Головне меню">
+            <button id="btnNotesList" class="btn-action"><span class="nav-icon">📝</span><span class="nav-text">Нотатки</span></button>
+            <button id="btnStats" class="btn-action"><span class="nav-icon">📊</span><span class="nav-text">Статистика</span></button>
+            <button id="btnQrCode" class="btn-action"><span class="nav-icon">📲</span><span class="nav-text">QR-код</span></button>
+            <button id="btnFeedback" class="btn-action"><span class="nav-icon">💬</span><span class="nav-text">Відгук</span></button>
+            <button id="btnPrint" class="btn-action btn-primary"><span class="nav-icon">🖨️</span><span class="nav-text">Друк</span></button>
+          </div>
         </div>
       </div>
     </header>
 
     <!-- Main Container -->
-    <main class="main-container px-gutter max-w-7xl mx-auto pt-4">
-      
-      <!-- Controls Row: Year & Notes -->
-      <div class="flex justify-between items-center mb-6">
-        <!-- Year Selector -->
-        <div class="year-selector flex items-center bg-surface-container-high rounded-full overflow-hidden border border-outline-variant">
-          <button id="btnPrevYear" class="px-4 py-1 text-on-surface-variant hover:bg-surface-container-highest transition-colors font-bold text-lg">◀</button>
-          <input type="number" id="yearInput" class="w-20 bg-transparent text-center text-on-surface font-headline-md outline-none" min="1900" max="2100" value="2026" aria-label="Рік" />
-          <button id="btnNextYear" class="px-4 py-1 text-on-surface-variant hover:bg-surface-container-highest transition-colors font-bold text-lg">▶</button>
-        </div>
-        <!-- Notes Button -->
-        <button id="btnNotesList" class="flex items-center gap-2 px-4 py-2 bg-primary-container/20 text-primary rounded-full hover:bg-primary-container/30 transition-colors">
-          <span class="material-symbols-outlined text-sm">edit_note</span>
-          <span class="font-label-sm">Нотатки</span>
-        </button>
-      </div>
-
+    <main class="main-container">
       <!-- Toolbar Section: Legend & Filters -->
       <section class="toolbar-section">
         <div class="legend" role="region" aria-label="Умовні позначення">
@@ -378,26 +285,6 @@
 
     <!-- Notification Toast Container -->
     <div id="toastNotification" class="toast-notification" role="status" aria-live="polite"></div>
-
-    <!-- BottomNavBar -->
-    <nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-2 py-3 pb-safe bg-surface-container-low dark:bg-surface-container-low border-t border-outline-variant shadow-lg rounded-t-xl">
-      <a href="index.html" class="flex flex-col items-center justify-center text-primary dark:text-primary-fixed-dim bg-primary-container/20 rounded-full px-4 py-1 active:scale-90 transition-transform duration-200">
-        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">calendar_today</span>
-        <span class="font-label-sm text-label-sm">Розклад</span>
-      </a>
-      <a href="statistics.html" class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-highest transition-colors active:scale-90 transition-transform duration-200">
-        <span class="material-symbols-outlined">bar_chart</span>
-        <span class="font-label-sm text-label-sm">Статистика</span>
-      </a>
-      <button id="btnNavQrCode" class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-highest transition-colors active:scale-90 transition-transform duration-200" style="background:none; border:none; padding:0; cursor:pointer;">
-        <span class="material-symbols-outlined">qr_code_scanner</span>
-        <span class="font-label-sm text-label-sm">QR-код</span>
-      </button>
-      <button id="btnNavFeedback" class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-highest transition-colors active:scale-90 transition-transform duration-200" style="background:none; border:none; padding:0; cursor:pointer;">
-        <span class="material-symbols-outlined">person</span>
-        <span class="font-label-sm text-label-sm">Профіль</span>
-      </button>
-    </nav>
 
     <script src="app.js"></script>
   </body>

@@ -214,16 +214,12 @@
     init() {
       const savedTheme = Utils.safeGetItem(CONFIG.STORAGE_KEYS.THEME, "dark");
       document.documentElement.setAttribute("data-theme", savedTheme);
-      if (savedTheme === "dark") document.documentElement.classList.add("dark");
-      else document.documentElement.classList.remove("dark");
       this.updateIcon(savedTheme);
     },
 
     toggle() {
       const current = document.documentElement.getAttribute("data-theme") === "light" ? "dark" : "light";
       document.documentElement.setAttribute("data-theme", current);
-      if (current === "dark") document.documentElement.classList.add("dark");
-      else document.documentElement.classList.remove("dark");
       Utils.safeSetItem(CONFIG.STORAGE_KEYS.THEME, current);
       this.updateIcon(current);
     },
@@ -1140,7 +1136,7 @@ ${Utils.escapeHtml(feedbackData.text)}
       if (btnDoneStatsModal) btnDoneStatsModal.addEventListener("click", () => StatsController.close());
 
       // QR Code Listeners
-      const btnQrCode = document.getElementById("btnNavQrCode");
+      const btnQrCode = document.getElementById("btnQrCode");
       const btnCloseQrModal = document.getElementById("btnCloseQrModal");
       const btnCopyUrl = document.getElementById("btnCopyUrl");
       const btnShareNative = document.getElementById("btnShareNative");
@@ -1150,8 +1146,7 @@ ${Utils.escapeHtml(feedbackData.text)}
       if (btnShareNative) btnShareNative.addEventListener("click", () => QrController.shareNative());
 
       // Feedback Listeners
-      const btnFeedback = document.getElementById("btnNavFeedback");
-      const btnProfileNav = document.getElementById("btnProfileNav");
+      const btnFeedback = document.getElementById("btnFeedback");
       const btnCloseFeedbackModal = document.getElementById("btnCloseFeedbackModal");
       const btnCancelFeedback = document.getElementById("btnCancelFeedback");
       const btnSubmitFeedback = document.getElementById("btnSubmitFeedback");
@@ -1159,7 +1154,6 @@ ${Utils.escapeHtml(feedbackData.text)}
       const starRating = document.getElementById("starRating");
 
       if (btnFeedback) btnFeedback.addEventListener("click", () => FeedbackController.open());
-      if (btnProfileNav) btnProfileNav.addEventListener("click", () => FeedbackController.open());
       if (btnCloseFeedbackModal) btnCloseFeedbackModal.addEventListener("click", () => FeedbackController.close());
       if (btnCancelFeedback) btnCancelFeedback.addEventListener("click", () => FeedbackController.close());
       if (btnSubmitFeedback) btnSubmitFeedback.addEventListener("click", () => FeedbackController.submit());
