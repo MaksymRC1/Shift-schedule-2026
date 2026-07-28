@@ -43,14 +43,7 @@
             <button id="btnNextYear" class="btn-nav" title="Наступний рік" aria-label="Наступний рік">▶</button>
           </div>
 
-          <!-- Action Buttons (Mobile Bottom Navigation Menu) -->
-          <div class="action-buttons" role="navigation" aria-label="Головне меню">
-            <button id="btnNotesList" class="btn-action"><span class="nav-icon">📝</span><span class="nav-text">Нотатки</span></button>
-            <button id="btnStats" class="btn-action"><span class="nav-icon">📊</span><span class="nav-text">Статистика</span></button>
-            <button id="btnQrCode" class="btn-action"><span class="nav-icon">📲</span><span class="nav-text">QR-код</span></button>
-            <button id="btnFeedback" class="btn-action"><span class="nav-icon">💬</span><span class="nav-text">Відгук</span></button>
-            <button id="btnPrint" class="btn-action btn-primary"><span class="nav-icon">🖨️</span><span class="nav-text">Друк</span></button>
-          </div>
+          <!-- Action buttons moved to bottom nav -->
         </div>
       </div>
     </header>
@@ -285,6 +278,14 @@
 
     <!-- Notification Toast Container -->
     <div id="toastNotification" class="toast-notification" role="status" aria-live="polite"></div>
+
+    <!-- Mobile Bottom Navigation Menu -->
+    <div class="action-buttons" role="navigation" aria-label="Головне меню">
+      <button id="btnNotesList" class="btn-action"><span class="nav-icon">📝</span><span class="nav-text">Нотатки</span></button>
+      <button id="btnStats" class="btn-action"><span class="nav-icon">📊</span><span class="nav-text">Статистика</span></button>
+      <button id="btnQrCode" class="btn-action"><span class="nav-icon">📲</span><span class="nav-text">QR-код</span></button>
+      <button id="btnFeedback" class="btn-action"><span class="nav-icon">💬</span><span class="nav-text">Відгук</span></button>
+    </div>
 
     <script src="app.js"></script>
   </body>

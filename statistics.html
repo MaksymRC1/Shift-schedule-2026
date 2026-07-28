@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html class="dark" lang="uk">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ВП ПАЕС - Статистика змін</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-primary-fixed": "#07006c",
+                    "surface-container-lowest": "#0d0d16",
+                    "primary-container": "#5d5fef",
+                    "on-surface": "#e4e1ed",
+                    "surface": "#13131b",
+                    "secondary-container": "#414750",
+                    "on-tertiary-container": "#fff6f3",
+                    "on-tertiary-fixed-variant": "#743500",
+                    "on-secondary-fixed-variant": "#414750",
+                    "primary-fixed": "#e1e0ff",
+                    "surface-container-highest": "#34343d",
+                    "surface-variant": "#34343d",
+                    "on-secondary-container": "#b0b5bf",
+                    "on-surface-variant": "#c7c4d7",
+                    "surface-container": "#1f1f27",
+                    "on-background": "#e4e1ed",
+                    "surface-bright": "#393842",
+                    "on-secondary": "#2b3139",
+                    "on-primary-container": "#faf7ff",
+                    "secondary-fixed-dim": "#c1c7d1",
+                    "inverse-surface": "#e4e1ed",
+                    "tertiary": "#ffb689",
+                    "on-primary-fixed-variant": "#2e2bc2",
+                    "tertiary-container": "#b65700",
+                    "on-error": "#690005",
+                    "on-tertiary-fixed": "#321300",
+                    "surface-container-high": "#292932",
+                    "on-tertiary": "#512300",
+                    "secondary": "#c1c7d1",
+                    "tertiary-fixed-dim": "#ffb689",
+                    "inverse-on-surface": "#302f39",
+                    "error": "#ffb4ab",
+                    "on-error-container": "#ffdad6",
+                    "surface-tint": "#c1c1ff",
+                    "primary": "#c1c1ff",
+                    "on-primary": "#1200a9",
+                    "outline-variant": "#464555",
+                    "error-container": "#93000a",
+                    "background": "#13131b",
+                    "outline": "#908fa0",
+                    "primary-fixed-dim": "#c1c1ff",
+                    "secondary-fixed": "#dde3ed",
+                    "surface-container-low": "#1b1b23",
+                    "surface-dim": "#13131b",
+                    "inverse-primary": "#4849da",
+                    "tertiary-fixed": "#ffdbc8",
+                    "on-secondary-fixed": "#161c23"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "stack-xs": "0.25rem",
+                    "stack-sm": "0.5rem",
+                    "gutter": "1rem",
+                    "margin-page": "2rem",
+                    "grid-cell": "40px",
+                    "stack-md": "1rem"
+            },
+            "fontFamily": {
+                    "display-lg": ["JetBrains Mono"],
+                    "body-base": ["Hanken Grotesk"],
+                    "label-sm": ["JetBrains Mono"],
+                    "headline-md": ["Hanken Grotesk"],
+                    "shift-digit": ["JetBrains Mono"]
+            },
+            "fontSize": {
+                    "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-base": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "shift-digit": ["14px", {"lineHeight": "14px", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #13131b;
+            font-family: 'Hanken Grotesk', sans-serif;
+            color: #e4e1ed;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #1b1b23;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #464555;
+            border-radius: 2px;
+        }
+        .glass-panel {
+            background: rgba(31, 31, 39, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid #30363D;
+        }
+        .glass-panel::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: inherit;
+            background: radial-gradient(400px circle at var(--mouse-x) var(--mouse-y), rgba(193, 193, 255, 0.05), transparent 40%);
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+        .glass-panel:hover::before {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center px-gutter py-stack-sm w-full sticky top-0 z-50 bg-surface dark:bg-surface border-b border-outline-variant">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary dark:text-primary-fixed-dim" style="font-size: 28px;">bolt</span>
+<h1 class="font-display-lg text-display-lg-mobile font-bold text-primary dark:text-primary-fixed-dim">ВП ПАЕС</h1>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-full hover:bg-surface-container-high transition-colors active:scale-95 transition-transform duration-150">
+<span class="material-symbols-outlined text-on-surface-variant">calendar_month</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a power plant engineer in a dark workspace, sharp lighting, corporate technical portrait style, high contrast, technical aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD_SB44hNYSk9p_AFejbi2mElkLB8XmAdp0SAfAQx7vfzYjXRRUWH81iCA-TogL6HkPtaU96Yl7DZivEfLdTPtNARoKvGJn0CAq9-NOt5NeHRJmv4jzTDETkPD5EL60kRKYy1Mkepd3-uYAYGXKlhGJdu3zGz7uPNYs1q4HctnahFuPrrAjH7UuPsxfJqdQCXwWV_L3_wRlkXYGGlJXkhOKE_KNI97elXxHmX9XWG0Oo_Zcip_t3aD3"/>
+</div>
+</div>
+</header>
+<main class="px-gutter pt-gutter max-w-7xl mx-auto space-y-gutter">
+<!-- Dashboard Summary Header -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<!-- Total Hours Card -->
+<div class="glass-panel p-gutter rounded-xl flex flex-col justify-between h-32 relative overflow-hidden">
+<div class="z-10">
+<p class="font-label-sm text-label-sm text-on-surface-variant">Відпрацьовано годин у січні</p>
+<h2 class="font-display-lg text-display-lg-mobile text-primary mt-2">168 г</h2>
+</div>
+<div class="absolute -right-4 -bottom-4 opacity-10">
+<span class="material-symbols-outlined" style="font-size: 120px;">timer</span>
+</div>
+</div>
+<!-- Overtime Card -->
+<div class="glass-panel p-gutter rounded-xl flex flex-col justify-between h-32 relative overflow-hidden">
+<div class="z-10">
+<p class="font-label-sm text-label-sm text-on-surface-variant">Понаднормові</p>
+<div class="flex items-baseline gap-2 mt-2">
+<h2 class="font-display-lg text-display-lg-mobile text-tertiary">12 г</h2>
+<span class="font-label-sm text-label-sm text-tertiary/60">+4.5% від норми</span>
+</div>
+</div>
+<div class="absolute -right-4 -bottom-4 opacity-10">
+<span class="material-symbols-outlined" style="font-size: 120px;">trending_up</span>
+</div>
+</div>
+<!-- Shift Efficiency Card -->
+<div class="glass-panel p-gutter rounded-xl flex flex-col justify-between h-32 relative overflow-hidden">
+<div class="z-10">
+<p class="font-label-sm text-label-sm text-on-surface-variant">Денні / Нічні зміни</p>
+<div class="flex items-center gap-4 mt-2">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-primary text-sm">sunny</span>
+<span class="font-shift-digit text-shift-digit">12</span>
+</div>
+<div class="h-4 w-[1px] bg-outline-variant"></div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-secondary-fixed-dim text-sm">dark_mode</span>
+<span class="font-shift-digit text-shift-digit">9</span>
+</div>
+</div>
+</div>
+<div class="absolute -right-4 -bottom-4 opacity-10 text-on-surface-variant/20">
+<span class="material-symbols-outlined" style="font-size: 120px;">monitoring</span>
+</div>
+</div>
+</section>
+<!-- Bento Grid Statistics -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
+<!-- Main Bar Chart: Monthly Progress -->
+<div class="md:col-span-8 glass-panel p-gutter rounded-xl flex flex-col">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-headline-md text-headline-md text-on-surface">Динаміка за 6 місяців</h3>
+<div class="flex gap-2">
+<span class="inline-flex items-center gap-1 px-2 py-1 rounded bg-surface-container-high text-label-sm font-label-sm text-on-surface-variant border border-outline-variant">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span> Години
+                         </span>
+</div>
+</div>
+<div class="flex-grow flex items-end justify-between gap-4 h-64 pt-4 px-2">
+<!-- Aug -->
+<div class="flex flex-col items-center gap-2 w-full group">
+<div class="w-full bg-surface-container-highest rounded-t-sm relative h-[70%] transition-all group-hover:bg-primary-container/40">
+<div class="absolute bottom-0 w-full bg-primary-container rounded-t-sm h-[85%] group-hover:brightness-110"></div>
+<span class="absolute -top-6 left-1/2 -translate-x-1/2 text-label-sm font-label-sm opacity-0 group-hover:opacity-100">160</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Сер</span>
+</div>
+<!-- Sep -->
+<div class="flex flex-col items-center gap-2 w-full group">
+<div class="w-full bg-surface-container-highest rounded-t-sm relative h-[70%] transition-all group-hover:bg-primary-container/40">
+<div class="absolute bottom-0 w-full bg-primary-container rounded-t-sm h-[92%] group-hover:brightness-110"></div>
+<span class="absolute -top-6 left-1/2 -translate-x-1/2 text-label-sm font-label-sm opacity-0 group-hover:opacity-100">176</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Вер</span>
+</div>
+<!-- Oct -->
+<div class="flex flex-col items-center gap-2 w-full group">
+<div class="w-full bg-surface-container-highest rounded-t-sm relative h-[70%] transition-all group-hover:bg-primary-container/40">
+<div class="absolute bottom-0 w-full bg-primary-container rounded-t-sm h-[88%] group-hover:brightness-110"></div>
+<span class="absolute -top-6 left-1/2 -translate-x-1/2 text-label-sm font-label-sm opacity-0 group-hover:opacity-100">168</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Жов</span>
+</div>
+<!-- Nov -->
+<div class="flex flex-col items-center gap-2 w-full group">
+<div class="w-full bg-surface-container-highest rounded-t-sm relative h-[70%] transition-all group-hover:bg-primary-container/40">
+<div class="absolute bottom-0 w-full bg-primary-container rounded-t-sm h-[75%] group-hover:brightness-110"></div>
+<span class="absolute -top-6 left-1/2 -translate-x-1/2 text-label-sm font-label-sm opacity-0 group-hover:opacity-100">152</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Лис</span>
+</div>
+<!-- Dec -->
+<div class="flex flex-col items-center gap-2 w-full group">
+<div class="w-full bg-surface-container-highest rounded-t-sm relative h-[70%] transition-all group-hover:bg-primary-container/40">
+<div class="absolute bottom-0 w-full bg-primary-container rounded-t-sm h-[95%] group-hover:brightness-110"></div>
+<span class="absolute -top-6 left-1/2 -translate-x-1/2 text-label-sm font-label-sm opacity-0 group-hover:opacity-100">182</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Гру</span>
+</div>
+<!-- Jan -->
+<div class="flex flex-col items-center gap-2 w-full group">
+<div class="w-full bg-surface-container-highest rounded-t-sm relative h-[70%] transition-all group-hover:bg-primary-container/40">
+<div class="absolute bottom-0 w-full bg-primary-container rounded-t-sm h-[88%] ring-2 ring-primary ring-offset-2 ring-offset-surface-container group-hover:brightness-110"></div>
+<span class="absolute -top-6 left-1/2 -translate-x-1/2 text-label-sm font-label-sm font-bold text-primary">168</span>
+</div>
+<span class="font-label-sm text-label-sm text-primary font-bold">Січ</span>
+</div>
+</div>
+</div>
+<!-- Distribution Chart: Shift Types -->
+<div class="md:col-span-4 glass-panel p-gutter rounded-xl flex flex-col">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-6">Типи змін</h3>
+<div class="flex-grow flex flex-col justify-center gap-4">
+<div class="space-y-2">
+<div class="flex justify-between text-label-sm font-label-sm">
+<span>Денна (1)</span>
+<span class="text-on-surface-variant">42%</span>
+</div>
+<div class="w-full bg-surface-container-highest h-2 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[42%]"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-label-sm font-label-sm">
+<span>Вечірня (2)</span>
+<span class="text-on-surface-variant">33%</span>
+</div>
+<div class="w-full bg-surface-container-highest h-2 rounded-full overflow-hidden">
+<div class="bg-tertiary h-full w-[33%]"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-label-sm font-label-sm">
+<span>Нічна (3)</span>
+<span class="text-on-surface-variant">25%</span>
+</div>
+<div class="w-full bg-surface-container-highest h-2 rounded-full overflow-hidden">
+<div class="bg-secondary-fixed-dim h-full w-[25%]"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Calendar Insight: Heatmap -->
+<div class="md:col-span-12 glass-panel p-gutter rounded-xl">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-headline-md text-headline-md text-on-surface">Інтенсивність навантаження</h3>
+<div class="flex items-center gap-2">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Меньше</span>
+<div class="flex gap-1">
+<div class="w-3 h-3 rounded-sm bg-surface-container-highest"></div>
+<div class="w-3 h-3 rounded-sm bg-primary/30"></div>
+<div class="w-3 h-3 rounded-sm bg-primary/60"></div>
+<div class="w-3 h-3 rounded-sm bg-primary"></div>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Більше</span>
+</div>
+</div>
+<!-- Simplified heatmap grid -->
+<div class="grid grid-cols-7 sm:grid-cols-14 md:grid-cols-31 gap-1">
+<!-- Day cells generated as a visual pattern -->
+<script>
+                        for(let i=1; i<=31; i++) {
+                            const intensity = Math.random();
+                            const bg = intensity > 0.8 ? 'bg-primary' : intensity > 0.5 ? 'bg-primary/60' : intensity > 0.2 ? 'bg-primary/30' : 'bg-surface-container-highest';
+                            document.write(`<div class="aspect-square ${bg} rounded-sm transition-all hover:scale-110 hover:shadow-lg cursor-help border border-outline-variant/10" title="Day ${i}: ${Math.floor(intensity*12)}h"></div>`);
+                        }
+                    </script>
+</div>
+<div class="mt-4 flex justify-between font-label-sm text-label-sm text-on-surface-variant/60">
+<span>1 Січня</span>
+<span>31 Січня</span>
+</div>
+</div>
+<!-- Recent Highlights Card -->
+<div class="md:col-span-12 glass-panel p-gutter rounded-xl">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-4">Журнал змін (Останні)</h3>
+<div class="overflow-x-auto custom-scrollbar">
+<table class="w-full text-left border-collapse">
+<thead class="border-b border-outline-variant text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider">
+<tr>
+<th class="pb-3 pr-4 font-medium">Дата</th>
+<th class="pb-3 pr-4 font-medium">Зміна</th>
+<th class="pb-3 pr-4 font-medium">Тривалість</th>
+<th class="pb-3 pr-4 font-medium">Статус</th>
+<th class="pb-3 font-medium">Позанормові</th>
+</tr>
+</thead>
+<tbody class="text-body-base font-body-base">
+<tr class="border-b border-outline-variant/30 hover:bg-surface-container transition-colors">
+<td class="py-4 pr-4">27.01.2026</td>
+<td class="py-4 pr-4"><span class="px-2 py-0.5 rounded-sm bg-primary/20 text-primary font-shift-digit text-xs">Денна (1)</span></td>
+<td class="py-4 pr-4">8г 00хв</td>
+<td class="py-4 pr-4 text-primary">Завершено</td>
+<td class="py-4">—</td>
+</tr>
+<tr class="border-b border-outline-variant/30 hover:bg-surface-container transition-colors">
+<td class="py-4 pr-4">25.01.2026</td>
+<td class="py-4 pr-4"><span class="px-2 py-0.5 rounded-sm bg-secondary-container/50 text-secondary-fixed-dim font-shift-digit text-xs">Нічна (3)</span></td>
+<td class="py-4 pr-4">12г 00хв</td>
+<td class="py-4 pr-4 text-primary">Завершено</td>
+<td class="py-4 text-tertiary">+4г</td>
+</tr>
+<tr class="border-b border-outline-variant/30 hover:bg-surface-container transition-colors">
+<td class="py-4 pr-4">23.01.2026</td>
+<td class="py-4 pr-4"><span class="px-2 py-0.5 rounded-sm bg-tertiary-container/30 text-tertiary font-shift-digit text-xs">Вечірня (2)</span></td>
+<td class="py-4 pr-4">8г 00хв</td>
+<td class="py-4 pr-4 text-primary">Завершено</td>
+<td class="py-4">—</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-2 py-3 pb-safe bg-surface-container-low dark:bg-surface-container-low border-t border-outline-variant shadow-lg rounded-t-xl">
+<a href="index.html" class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-highest transition-colors active:scale-90 transition-transform duration-200">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="font-label-sm text-label-sm">Розклад</span>
+</a>
+<a href="statistics.html" class="flex flex-col items-center justify-center text-primary dark:text-primary-fixed-dim bg-primary-container/20 rounded-full px-4 py-1 active:scale-90 transition-transform duration-200">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">bar_chart</span>
+<span class="font-label-sm text-label-sm">Статистика</span>
+</a>
+<a href="#" class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-highest transition-colors active:scale-90 transition-transform duration-200">
+<span class="material-symbols-outlined">qr_code_scanner</span>
+<span class="font-label-sm text-label-sm">QR-код</span>
+</a>
+<a href="#" class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-highest transition-colors active:scale-90 transition-transform duration-200">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-sm text-label-sm">Профіль</span>
+</a>
+</nav>
+<!-- Micro-interaction script -->
+<script>
+        document.querySelectorAll('.glass-panel').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                card.style.setProperty('--mouse-x', `${x}px`);
+                card.style.setProperty('--mouse-y', `${y}px`);
+            });
+        });
+    </script>
+</body>
+</html>
