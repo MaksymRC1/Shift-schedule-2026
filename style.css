@@ -258,50 +258,43 @@ body.modal-open {
 }
 
 .action-buttons {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 1000;
-  background: var(--bg-secondary);
-  border-top: 1px solid var(--border-color);
   display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-  padding: 6px 4px max(8px, env(safe-area-inset-bottom, 8px)) 4px;
-  box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.2);
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 .btn-action {
-  background: transparent;
-  border: none;
-  box-shadow: none;
-  flex-direction: column;
-  gap: 2px;
-  padding: 4px 2px;
-  min-height: auto;
-  border-radius: 6px;
-  color: var(--text-secondary);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 8px 14px;
+  min-height: 42px;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
   cursor: pointer;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 6px;
   transition: all 0.2s;
 }
 
-.btn-action:hover,
-.btn-action:active {
-  color: var(--accent-color);
-  background: rgba(99, 102, 241, 0.08);
+.btn-action:hover {
+  background: var(--bg-hover);
 }
 
-.btn-action .nav-icon {
-  font-size: 1.3rem;
+.btn-action.btn-primary {
+  background: var(--text-primary);
+  color: var(--bg-primary);
+  border-color: var(--text-primary);
 }
 
-.btn-action .nav-text {
-  font-size: 0.65rem;
-  font-weight: 600;
+.btn-action.btn-primary:hover {
+  background: var(--text-secondary);
+  border-color: var(--text-secondary);
+  color: var(--bg-primary);
 }
 
 .nav-icon {
@@ -920,7 +913,55 @@ body.modal-open {
     justify-content: space-between;
   }
 
-  /* Button Print already removed from HTML, keeping it clean */
+  .action-buttons {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 1000 !important;
+    background: var(--bg-secondary) !important;
+    border-top: 1px solid var(--border-color) !important;
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-around !important;
+    padding: 6px 4px max(8px, env(safe-area-inset-bottom, 8px)) 4px !important;
+    box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.2) !important;
+    width: auto !important;
+    gap: 0 !important;
+  }
+
+  .action-buttons .btn-action {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    flex-direction: column !important;
+    gap: 2px !important;
+    padding: 4px 2px !important;
+    min-height: auto !important;
+    width: auto !important;
+    border-radius: 6px !important;
+    color: var(--text-secondary) !important;
+  }
+
+  .action-buttons .btn-action:hover,
+  .action-buttons .btn-action:active {
+    color: var(--text-primary) !important;
+    background: var(--bg-hover) !important;
+  }
+
+  .action-buttons .btn-action .nav-icon {
+    font-size: 1.3rem !important;
+  }
+
+  .action-buttons .btn-action .nav-text {
+    font-size: 0.65rem !important;
+    font-weight: 600 !important;
+  }
+
+  /* Приховуємо кнопку "Друк" на мобільних пристроях у нижньому меню */
+  #btnPrint {
+    display: none !important;
+  }
 
   .toolbar-section {
     flex-direction: column;

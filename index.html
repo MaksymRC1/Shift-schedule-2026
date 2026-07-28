@@ -43,8 +43,12 @@
             <button id="btnNextYear" class="btn-nav" title="Наступний рік" aria-label="Наступний рік">▶</button>
           </div>
 
-          <!-- Action buttons moved to bottom nav -->
-        </div>
+          <div class="action-buttons" role="navigation" aria-label="Головне меню">
+            <button id="btnNotesList" class="btn-action"><span class="nav-icon">📝</span><span class="nav-text">Нотатки</span></button>
+            <button id="btnStats" class="btn-action"><span class="nav-icon">📊</span><span class="nav-text">Статистика</span></button>
+            <button id="btnQrCode" class="btn-action"><span class="nav-icon">📲</span><span class="nav-text">QR-код</span></button>
+            <button id="btnFeedback" class="btn-action"><span class="nav-icon">💬</span><span class="nav-text">Відгук</span></button>
+          </div>
       </div>
     </header>
 
@@ -147,7 +151,7 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button id="btnDeleteNote" class="btn-action" style="color: #ef4444; border-color: rgba(239,68,68,0.3);">Видалити</button>
+          <button id="btnDeleteNote" class="btn-action">Видалити</button>
           <button id="btnCancelNote" class="btn-action">Скасувати</button>
           <button id="btnSaveNote" class="btn-action btn-primary">Зберегти</button>
         </div>
@@ -159,7 +163,7 @@
       <div class="modal-card" style="max-width: 650px;">
         <div class="drawer-handle"></div>
         <div class="modal-header">
-          <h2 id="notesListTitle" class="modal-title">📋 Всі збережені нотатки</h2>
+          <h2 id="notesListTitle" class="modal-title">Всі збережені нотатки</h2>
           <button id="btnCloseNotesListModal" class="btn-close" aria-label="Закрити">&times;</button>
         </div>
         <div class="modal-body">
@@ -180,7 +184,7 @@
       <div class="modal-card" style="text-align: center; max-width: 440px;">
         <div class="drawer-handle"></div>
         <div class="modal-header">
-          <h2 id="qrTitle" class="modal-title">📲 Поділитися графіком</h2>
+          <h2 id="qrTitle" class="modal-title">Поділитися графіком</h2>
           <button id="btnCloseQrModal" class="btn-close" aria-label="Закрити">&times;</button>
         </div>
         <div class="modal-body" style="align-items: center;">
@@ -195,8 +199,8 @@
           </div>
         </div>
         <div class="modal-footer" style="justify-content: center; width: 100%;">
-          <button id="btnCopyUrl" class="btn-action">📋 Копіювати посилання</button>
-          <button id="btnShareNative" class="btn-action btn-primary">📤 Поділитися</button>
+          <button id="btnCopyUrl" class="btn-action">Копіювати посилання</button>
+          <button id="btnShareNative" class="btn-action btn-primary">Поділитися</button>
         </div>
       </div>
     </div>
@@ -206,7 +210,7 @@
       <div class="modal-card" style="max-width: 480px;">
         <div class="drawer-handle"></div>
         <div class="modal-header">
-          <h2 id="feedbackTitle" class="modal-title">💬 Зворотній зв'язок</h2>
+          <h2 id="feedbackTitle" class="modal-title">Зворотній зв'язок</h2>
           <button id="btnCloseFeedbackModal" class="btn-close" aria-label="Закрити">&times;</button>
         </div>
         <div class="modal-body">
@@ -223,10 +227,10 @@
           <div class="form-group">
             <label class="form-label" for="feedbackCategory">Категорія:</label>
             <select id="feedbackCategory" class="form-select">
-              <option value="Пропозиція">💡 Пропозиція покращення</option>
-              <option value="Помилка">🐛 Повідомити про помилку</option>
-              <option value="Подяка">❤️ Подяка</option>
-              <option value="Інше">❓ Інше питання</option>
+              <option value="Пропозиція">Пропозиція покращення</option>
+              <option value="Помилка">Повідомити про помилку</option>
+              <option value="Подяка">Подяка</option>
+              <option value="Інше">Інше питання</option>
             </select>
           </div>
           <div class="form-group">
@@ -240,7 +244,7 @@
 
           <!-- Optional Collapsible Telegram Bot Settings -->
           <button id="btnToggleTgSettings" type="button" class="btn-action" style="font-size: 0.75rem; padding: 4px 8px; align-self: flex-start; margin-top: 4px;">
-            ⚙️ Налаштувати Telegram Bot
+            Налаштувати Telegram Bot
           </button>
           <div id="tgSettingsPanel" style="display: none; flex-direction: column; gap: 8px; background: var(--bg-primary); padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); margin-top: 6px;">
             <div class="form-group">
@@ -264,7 +268,7 @@
     <div id="statsModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="statsModalTitle">
       <div class="modal-card">
         <div class="modal-header">
-          <h2 id="statsModalTitle" class="modal-title">📊 Статистика використання</h2>
+          <h2 id="statsModalTitle" class="modal-title">Статистика використання</h2>
           <button id="btnCloseStatsModal" class="btn-close" aria-label="Закрити">&times;</button>
         </div>
         <div class="modal-body" id="statsModalContent">
@@ -278,14 +282,6 @@
 
     <!-- Notification Toast Container -->
     <div id="toastNotification" class="toast-notification" role="status" aria-live="polite"></div>
-
-    <!-- Mobile Bottom Navigation Menu -->
-    <div class="action-buttons" role="navigation" aria-label="Головне меню">
-      <button id="btnNotesList" class="btn-action"><span class="nav-icon">📝</span><span class="nav-text">Нотатки</span></button>
-      <button id="btnStats" class="btn-action"><span class="nav-icon">📊</span><span class="nav-text">Статистика</span></button>
-      <button id="btnQrCode" class="btn-action"><span class="nav-icon">📲</span><span class="nav-text">QR-код</span></button>
-      <button id="btnFeedback" class="btn-action"><span class="nav-icon">💬</span><span class="nav-text">Відгук</span></button>
-    </div>
 
     <script src="app.js"></script>
   </body>
