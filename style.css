@@ -1,12 +1,12 @@
 /* Global Design System & Variables */
 :root {
-  --bg-primary: #0f172a;
-  --bg-secondary: #1e293b;
-  --bg-card: #1e293b;
-  --bg-hover: #334155;
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --border-color: #334155;
+  --bg-primary: #13131b; /* surface */
+  --bg-secondary: #1f1f27; /* surface-container */
+  --bg-card: #1b1b23; /* surface-container-low */
+  --bg-hover: #34343d; /* surface-container-highest */
+  --text-primary: #e4e1ed; /* on-surface */
+  --text-secondary: #b0b5bf; /* on-secondary-container */
+  --border-color: #464555; /* outline-variant */
 
   /* Shift colors */
   --shift-1-bg: #fef08a; /* Morning - Yellow/Amber */
@@ -28,13 +28,13 @@
 }
 
 [data-theme="light"] {
-  --bg-primary: #f8fafc;
+  --bg-primary: #fdf8f8;
   --bg-secondary: #ffffff;
-  --bg-card: #ffffff;
-  --bg-hover: #f1f5f9;
-  --text-primary: #0f172a;
-  --text-secondary: #64748b;
-  --border-color: #e2e8f0;
+  --bg-card: #f3f4f6;
+  --bg-hover: #e5e7eb;
+  --text-primary: #1f2937;
+  --text-secondary: #4b5563;
+  --border-color: #d1d5db;
 
   --shift-1-bg: #fef9c3;
   --shift-1-text: #713f12;
