@@ -847,9 +847,7 @@
     },
 
     copyUrl() {
-      const qrUrlInput = document.getElementById("qrUrlInput");
-      if (!qrUrlInput) return;
-      const url = qrUrlInput.value;
+      const url = window.location.href;
 
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(url).then(() => {
@@ -863,12 +861,26 @@
     },
 
     fallbackCopy(text) {
-      const qrUrlInput = document.getElementById("qrUrlInput");
-      if (qrUrlInput) {
-        qrUrlInput.select();
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      
+      // Prevent scrolling to bottom of page in MS Edge.
+      textArea.style.top = "0";
+      textArea.style.left = "0";
+      textArea.style.position = "fixed";
+
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+
+      try {
         document.execCommand('copy');
+        Utils.showToast("📋 Посилання скопійовано!");
+      } catch (err) {
+        console.error('Fallback: Oops, unable to copy', err);
       }
-      Utils.showToast("📋 Посилання скопійовано!");
+
+      document.body.removeChild(textArea);
     },
 
     shareNative() {
@@ -890,18 +902,12 @@
     open() {
       const feedbackText = document.getElementById("feedbackText");
       const feedbackContact = document.getElementById("feedbackContact");
-      const tgTokenInput = document.getElementById("tgTokenInput");
-      const tgChatIdInput = document.getElementById("tgChatIdInput");
       const feedbackModal = document.getElementById("feedbackModal");
 
       if (feedbackText) feedbackText.value = "";
       if (feedbackContact) feedbackContact.value = "";
       State.selectedRating = 5;
       this.updateStarUI(5);
-
-      const creds = StorageService.getTgCredentials();
-      if (tgTokenInput) tgTokenInput.value = creds.token;
-      if (tgChatIdInput) tgChatIdInput.value = creds.chatId;
 
       if (feedbackModal) {
         feedbackModal.classList.add("active");
@@ -932,11 +938,9 @@
     },
 
     submit() {
-      const feedbackCategory = document.getElementById("feedbackCategory");
       const feedbackContact = document.getElementById("feedbackContact");
       const feedbackText = document.getElementById("feedbackText");
 
-      const category = feedbackCategory ? feedbackCategory.value : "Інше";
       const contact = feedbackContact ? feedbackContact.value.trim() : "";
       const text = feedbackText ? feedbackText.value.trim() : "";
 
@@ -948,7 +952,6 @@
       const feedbackData = {
         date: new Date().toISOString(),
         rating: State.selectedRating,
-        category,
         contact,
         text
       };
@@ -963,7 +966,6 @@
 ⚡ <b>Новий відгук з додатку Графік змін!</b>
 
 <b>Оцінка:</b> ${stars} (${feedbackData.rating}/5)
-<b>Категорія:</b> ${feedbackData.category}
 <b>Контакт:</b> ${feedbackData.contact || 'Не вказано'}
 <b>Дата:</b> ${new Date().toLocaleString('uk-UA')}
 
@@ -973,14 +975,6 @@ ${Utils.escapeHtml(feedbackData.text)}
 
       TelegramService.sendOrQueue(creds.token, creds.chatId, textMessage, "Відгук надіслано в Telegram! ❤️", "Відгук збережено в офлайн-чергу");
       this.close();
-    },
-
-    toggleTgSettings() {
-      const tgSettingsPanel = document.getElementById("tgSettingsPanel");
-      if (tgSettingsPanel) {
-        const isHidden = tgSettingsPanel.style.display === "none" || !tgSettingsPanel.style.display;
-        tgSettingsPanel.style.display = isHidden ? "flex" : "none";
-      }
     }
   };
 
@@ -1152,14 +1146,12 @@ ${Utils.escapeHtml(feedbackData.text)}
       const btnCloseFeedbackModal = document.getElementById("btnCloseFeedbackModal");
       const btnCancelFeedback = document.getElementById("btnCancelFeedback");
       const btnSubmitFeedback = document.getElementById("btnSubmitFeedback");
-      const btnToggleTgSettings = document.getElementById("btnToggleTgSettings");
       const starRating = document.getElementById("starRating");
       const btnsFeedback = document.querySelectorAll(".btn-feedback, #btnFeedback");
       btnsFeedback.forEach(btn => btn.addEventListener("click", () => FeedbackController.open()));
       if (btnCloseFeedbackModal) btnCloseFeedbackModal.addEventListener("click", () => FeedbackController.close());
       if (btnCancelFeedback) btnCancelFeedback.addEventListener("click", () => FeedbackController.close());
       if (btnSubmitFeedback) btnSubmitFeedback.addEventListener("click", () => FeedbackController.submit());
-      if (btnToggleTgSettings) btnToggleTgSettings.addEventListener("click", () => FeedbackController.toggleTgSettings());
 
       if (starRating) {
         const stars = starRating.querySelectorAll("span");

@@ -7,6 +7,18 @@
       name="description"
       content="Інтерактивний календар та графік змін для 5 змін (А, Б, В, Г, Д) з нотатками, QR-кодом, зворотним зв'язком у Telegram та офлайн PWA доступом."
     />
+    <meta name="keywords" content="графік змін, робочий графік, календар змін, розклад роботи, 5 змін, PWA, застосунок, розклад" />
+    
+    <!-- Open Graph (Facebook, Viber, Telegram) -->
+    <meta property="og:title" content="Графік змін | Мультирічний календар PWA" />
+    <meta property="og:description" content="Інтерактивний PWA додаток для ведення графіку робочих змін з можливістю додавання нотаток та офлайн доступом." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://shift-schedule-2026.vercel.app/" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Графік змін | Мультирічний календар PWA" />
+    <meta name="twitter:description" content="Інтерактивний PWA додаток для ведення графіку робочих змін." />
 
     <!-- PWA Settings & Icons -->
     <link rel="manifest" href="manifest.json" />
@@ -48,7 +60,7 @@
       </div>
 
       <details class="legend-accordion">
-        <summary>Фільтр змін</summary>
+        <summary aria-label="Фільтр змін" title="Фільтр змін" style="justify-content: center;"><span class="material-symbols-outlined" style="font-size: 20px;">filter_list</span></summary>
         <section class="toolbar-section">
           <div class="shift-filters" role="group" aria-label="Фільтр змін">
             <button class="btn-filter" data-filter="А">А</button>
@@ -79,8 +91,8 @@
           <button id="btnCloseMonthModal" class="btn-close" aria-label="Закрити">&times;</button>
         </div>
         <div class="month-modal-controls">
-          <button id="btnPrevMonthModal" class="btn-action btn-month-nav" title="Попередній місяць" aria-label="Попередній місяць">◀ Попередній</button>
-          <button id="btnNextMonthModal" class="btn-action btn-month-nav" title="Наступний місяць" aria-label="Наступний місяць">Наступний ▶</button>
+          <button id="btnPrevMonthModal" class="btn-action btn-month-nav" title="Попередній місяць" aria-label="Попередній місяць"><span class="material-symbols-outlined">chevron_left</span></button>
+          <button id="btnNextMonthModal" class="btn-action btn-month-nav" title="Наступний місяць" aria-label="Наступний місяць"><span class="material-symbols-outlined">chevron_right</span></button>
         </div>
         <div class="modal-body month-modal-body">
           <div id="monthModalTableContainer" class="table-wrapper"></div>
@@ -169,9 +181,7 @@
           <div id="qrContainer" class="qr-container">
             <img id="qrImage" src="" alt="QR Code" style="width: 220px; height: 220px; border-radius: 12px; border: 2px solid var(--border-color);" />
           </div>
-          <div class="form-group" style="width: 100%;">
-            <input type="text" id="qrUrlInput" class="form-input" readonly style="text-align: center; font-size: 0.85rem;" aria-label="Посилання на додаток" />
-          </div>
+
         </div>
         <div class="modal-footer" style="justify-content: center; width: 100%;">
           <button id="btnCopyUrl" class="btn-action">Копіювати посилання</button>
@@ -199,15 +209,7 @@
               <span data-star="5" class="active" role="radio" aria-checked="true" aria-label="5 зірок">★</span>
             </div>
           </div>
-          <div class="form-group">
-            <label class="form-label" for="feedbackCategory">Категорія:</label>
-            <select id="feedbackCategory" class="form-select">
-              <option value="Пропозиція">Пропозиція покращення</option>
-              <option value="Помилка">Повідомити про помилку</option>
-              <option value="Подяка">Подяка</option>
-              <option value="Інше">Інше питання</option>
-            </select>
-          </div>
+
           <div class="form-group">
             <label class="form-label" for="feedbackContact">Контакт для зв'язку (необов'язково):</label>
             <input type="text" id="feedbackContact" class="form-input" placeholder="example@email.com або @username" />
@@ -217,20 +219,7 @@
             <textarea id="feedbackText" class="form-textarea" rows="4" placeholder="Опишіть ваші враження, пропозиції або зауваження..."></textarea>
           </div>
 
-          <!-- Optional Collapsible Telegram Bot Settings -->
-          <button id="btnToggleTgSettings" type="button" class="btn-action" style="font-size: 0.75rem; padding: 4px 8px; align-self: flex-start; margin-top: 4px;">
-            Налаштувати Telegram Bot
-          </button>
-          <div id="tgSettingsPanel" style="display: none; flex-direction: column; gap: 8px; background: var(--bg-primary); padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); margin-top: 6px;">
-            <div class="form-group">
-              <label class="form-label" style="font-size: 0.75rem;">Telegram Bot Token:</label>
-              <input type="text" id="tgTokenInput" class="form-input" style="font-size: 0.8rem; padding: 6px 8px;" placeholder="Введіть токен бота..." />
-            </div>
-            <div class="form-group">
-              <label class="form-label" style="font-size: 0.75rem;">Telegram Chat ID:</label>
-              <input type="text" id="tgChatIdInput" class="form-input" style="font-size: 0.8rem; padding: 6px 8px;" placeholder="Введіть Chat ID..." />
-            </div>
-          </div>
+
         </div>
         <div class="modal-footer">
           <button id="btnCancelFeedback" class="btn-action">Скасувати</button>

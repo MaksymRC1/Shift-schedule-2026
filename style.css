@@ -826,9 +826,10 @@ body.modal-open {
 }
 
 .month-modal-card {
-  max-width: 96vw !important;
-  width: 96vw !important;
-  max-height: 92vh !important;
+  max-width: 98vw !important;
+  width: 98vw !important;
+  max-height: 96vh !important;
+  padding: 16px 12px 12px 12px !important;
 }
 
 @media (min-width: 769px) {
@@ -857,8 +858,14 @@ body.modal-open {
 }
 
 .btn-month-nav {
-  flex: 1;
-  max-width: 180px;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  padding: 0;
 }
 
 .month-modal-footer {
