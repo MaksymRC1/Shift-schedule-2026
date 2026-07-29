@@ -675,7 +675,12 @@
         const todayCell = modalContainer ? modalContainer.querySelector(".cell-today") : document.querySelector(".cell-today");
         if (todayCell) {
           todayCell.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
+          todayCell.classList.remove("today-highlight-pulse");
+          void todayCell.offsetWidth; // force reflow to restart animation
           todayCell.classList.add("today-highlight-pulse");
+          todayCell.addEventListener("animationend", () => {
+            todayCell.classList.remove("today-highlight-pulse");
+          }, { once: true });
         }
       }, 350);
     }
