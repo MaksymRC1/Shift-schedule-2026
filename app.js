@@ -155,21 +155,19 @@
         stats.lastVisit = new Date().toISOString();
         Utils.safeSetItem(CONFIG.STORAGE_KEYS.USAGE_STATS, JSON.stringify(stats));
         
-        // Send basic statistics to Telegram
+        // Track visit globally via server (Vercel KV) instead of spamming Telegram directly
         setTimeout(() => {
           if (navigator.onLine) {
-            const isFirstVisit = stats.visitCount === 1;
-            const message = isFirstVisit 
-              ? `🚀 <b>Новий користувач!</b>\nВідкрив додаток Графік змін.`
-              : `📊 <b>Вхід у додаток</b>\nВізит #${stats.visitCount}\nПерший візит: ${new Date(stats.firstVisit).toLocaleDateString('uk-UA')}`;
-            
-            fetch(`/api/send-message`, {
+            fetch(`/api/track-visit`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ text: message })
+              body: JSON.stringify({ 
+                isFirstVisit: stats.visitCount === 1,
+                visitCount: stats.visitCount
+              })
             }).catch(() => {});
           }
-        }, 2000); // Small delay so it doesn't block main render
+        }, 2000);
         
         return stats;
       } catch (e) {

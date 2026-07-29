@@ -1,1 +1,24 @@
-{}
+{
+  "name": "shift-schedule-2026",
+  "version": "1.0.0",
+  "description": "Сучасний веб-додаток для автоматичного розрахунку графіка чергувань 5 змін (**А, Б, В, Г, Д**). Працює як Progressive Web App (PWA) — встановлюється на смартфон і працює офлайн.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MaksymRC1/shift_schedule.git"
+  },
+  "keywords": [],
+  "author": "Maksym Otroshko <maksymotroshko@ukr.net>",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/MaksymRC1/shift_schedule/issues"
+  },
+  "homepage": "https://github.com/MaksymRC1/shift_schedule#readme",
+  "dependencies": {
+    "@upstash/redis": "^1.38.0"
+  }
+}
