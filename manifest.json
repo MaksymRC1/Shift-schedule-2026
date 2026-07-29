@@ -1,7 +1,8 @@
 {
-  "name": "Графік змін",
-  "short_name": "Графік",
-  "description": "Автоматизований календар та графік змін для 5 змін (А, Б, В, Г, Д) з нотатками та офлайн доступом",
+  "name": "Графік змін ПАЕС",
+  "short_name": "Зміни ПАЕС",
+  "description": "Автоматизований календар та графік змін ВП ПАЕС для 5 змін (А, Б, В, Г, Д) з нотатками та офлайн доступом",
+  "categories": ["productivity", "utilities", "business"],
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#0f172a",

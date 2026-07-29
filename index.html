@@ -5,31 +5,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
     <meta
       name="description"
-      content="Інтерактивний календар та графік змін для 5 змін (А, Б, В, Г, Д) з нотатками, QR-кодом, зворотним зв'язком у Telegram та офлайн PWA доступом."
+      content="Інтерактивний календар та графік змін ВП ПАЕС для 5 змін (А, Б, В, Г, Д). Мультирічний розклад, персональні нотатки, офлайн доступ через PWA."
     />
-    <meta name="keywords" content="графік змін, робочий графік, календар змін, розклад роботи, 5 змін, PWA, застосунок, розклад" />
+    <meta name="keywords" content="графік змін, ВП ПАЕС, ПАЕС, робочий графік, Південноукраїнська АЕС, календар змін, розклад роботи, 5 змін, А Б В Г Д, PWA, застосунок" />
     
     <!-- Open Graph (Facebook, Viber, Telegram) -->
-    <meta property="og:title" content="Графік змін | Мультирічний календар PWA" />
-    <meta property="og:description" content="Інтерактивний PWA додаток для ведення графіку робочих змін з можливістю додавання нотаток та офлайн доступом." />
+    <meta property="og:title" content="Графік змін ВП ПАЕС | Мультирічний календар" />
+    <meta property="og:description" content="Інтерактивний PWA додаток для ведення графіку робочих змін ВП ПАЕС (А, Б, В, Г, Д) з можливістю додавання нотаток та зручним офлайн доступом." />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://shift-schedule-2026.vercel.app/" />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary" />
-    <meta name="twitter:title" content="Графік змін | Мультирічний календар PWA" />
-    <meta name="twitter:description" content="Інтерактивний PWA додаток для ведення графіку робочих змін." />
+    <meta name="twitter:title" content="Графік змін ВП ПАЕС | Мультирічний календар" />
+    <meta name="twitter:description" content="Інтерактивний додаток для ведення графіку робочих змін ВП ПАЕС. Працює офлайн." />
 
     <!-- PWA Settings & Icons -->
     <link rel="manifest" href="manifest.json" />
     <meta name="theme-color" content="#0f172a" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="apple-mobile-web-app-title" content="Графік змін" />
+    <meta name="apple-mobile-web-app-title" content="Графік ПАЕС" />
     <link rel="apple-touch-icon" href="./icons/icon.svg" />
     <link rel="icon" type="image/svg+xml" href="./icons/icon.svg" />
 
-    <title>Графік змін | Мультирічний календар PWA</title>
+    <title>Графік змін ВП ПАЕС | Мультирічний календар PWA</title>
+
+    <!-- Structured Data (JSON-LD) for SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Графік змін ВП ПАЕС",
+      "operatingSystem": "Web, Android, iOS, Windows, macOS",
+      "applicationCategory": "ProductivityApplication",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "UAH"
+      },
+      "description": "Інтерактивний календар та графік змін ВП ПАЕС для 5 змін (А, Б, В, Г, Д) з підтримкою офлайн роботи, персональними нотатками та QR-кодом для поширення."
+    }
+    </script>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL,GRAD,opsz@400,0,0,24" rel="stylesheet" />
     <link rel="stylesheet" href="style.css" />
   </head>
