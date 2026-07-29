@@ -854,14 +854,8 @@ body.modal-open {
 
 .month-modal-controls {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
-  background: var(--bg-secondary);
-  padding: 8px 12px;
-  border-radius: 10px;
-  border: 1px solid var(--border-color);
+  gap: 8px;
 }
 
 .btn-month-nav {

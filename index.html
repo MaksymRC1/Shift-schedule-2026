@@ -82,16 +82,16 @@
     <div id="monthModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="monthModalTitle">
       <div class="modal-card month-modal-card">
         <div class="drawer-handle"></div>
-        <div class="modal-header">
-          <div class="month-modal-title-group">
+        <div class="modal-header" style="gap: 12px;">
+          <div class="month-modal-title-group" style="flex: 1;">
             <h2 id="monthModalTitle" class="modal-title">Місяць</h2>
             <span id="monthModalSubtitle" class="month-meta"></span>
           </div>
+          <div class="month-modal-controls">
+            <button id="btnPrevMonthModal" class="btn-action btn-month-nav" title="Попередній місяць" aria-label="Попередній місяць"><span class="material-symbols-outlined">chevron_left</span></button>
+            <button id="btnNextMonthModal" class="btn-action btn-month-nav" title="Наступний місяць" aria-label="Наступний місяць"><span class="material-symbols-outlined">chevron_right</span></button>
+          </div>
           <button id="btnCloseMonthModal" class="btn-close" aria-label="Закрити">&times;</button>
-        </div>
-        <div class="month-modal-controls">
-          <button id="btnPrevMonthModal" class="btn-action btn-month-nav" title="Попередній місяць" aria-label="Попередній місяць"><span class="material-symbols-outlined">chevron_left</span></button>
-          <button id="btnNextMonthModal" class="btn-action btn-month-nav" title="Наступний місяць" aria-label="Наступний місяць"><span class="material-symbols-outlined">chevron_right</span></button>
         </div>
         <div class="modal-body month-modal-body">
           <div id="monthModalTableContainer" class="table-wrapper"></div>
