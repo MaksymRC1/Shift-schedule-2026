@@ -163,7 +163,25 @@
     getStoredNotes() {
       try {
         const raw = Utils.safeGetItem(CONFIG.STORAGE_KEYS.NOTES);
-        return raw ? JSON.parse(raw) : {};
+        let notes = raw ? JSON.parse(raw) : {};
+        let modified = false;
+        const emojiMap = {
+          "🏖️ Відпустка": "⛱︎ Відпустка",
+          "🤒 Лікарняний": "✚ Лікарняний",
+          "⚡ Понаднормово": "⚡︎ Понаднормово",
+          "🔄 Заміна": "⇄ Заміна",
+          "📝 Особисте": "✎ Особисте"
+        };
+        Object.keys(notes).forEach(key => {
+          if (notes[key] && emojiMap[notes[key].statusTag]) {
+            notes[key].statusTag = emojiMap[notes[key].statusTag];
+            modified = true;
+          }
+        });
+        if (modified) {
+          Utils.safeSetItem(CONFIG.STORAGE_KEYS.NOTES, JSON.stringify(notes));
+        }
+        return notes;
       } catch (e) {
         return {};
       }
