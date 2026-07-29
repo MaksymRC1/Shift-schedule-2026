@@ -5,16 +5,23 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { chatId, text } = req.body;
+    const { text } = req.body;
     
-    if (!chatId || !text) {
-      return res.status(400).json({ error: 'Missing chatId or text' });
+    if (!text) {
+      return res.status(400).json({ error: 'Missing text' });
     }
 
     const token = process.env.TG_BOT_TOKEN;
+    const chatId = process.env.TG_CHAT_ID;
+
     if (!token) {
       console.error('TG_BOT_TOKEN is missing in Environment Variables.');
       return res.status(500).json({ error: 'Bot token not configured on server' });
+    }
+
+    if (!chatId) {
+      console.error('TG_CHAT_ID is missing in Environment Variables.');
+      return res.status(500).json({ error: 'Chat ID not configured on server' });
     }
 
     const response = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {

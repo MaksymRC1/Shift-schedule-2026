@@ -256,10 +256,10 @@
 
   // --- 8. Telegram & Outbox Service ---
   const TelegramService = {
-    queueOutboxItem(token, chatId, text, successToast) {
+    queueOutboxItem(text, successToast) {
       try {
         const outbox = JSON.parse(Utils.safeGetItem(CONFIG.STORAGE_KEYS.OUTBOX, "[]"));
-        outbox.push({ token, chatId, text, successToast, timestamp: Date.now() });
+        outbox.push({ text, successToast, timestamp: Date.now() });
         Utils.safeSetItem(CONFIG.STORAGE_KEYS.OUTBOX, JSON.stringify(outbox));
       } catch (e) {
         console.warn("Outbox queue error:", e);
@@ -278,7 +278,6 @@
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              chatId: item.chatId,
               text: item.text
             })
           }).then(res => res.json()).then(data => {
@@ -299,9 +298,9 @@
       }
     },
 
-    sendOrQueue(token, chatId, textMessage, successMsg, offlineMsg) {
+    sendOrQueue(textMessage, successMsg, offlineMsg) {
       if (!navigator.onLine) {
-        this.queueOutboxItem(token, chatId, textMessage, successMsg);
+        this.queueOutboxItem(textMessage, successMsg);
         Utils.showToast(offlineMsg);
         return;
       }
@@ -310,18 +309,17 @@
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          chatId: chatId,
           text: textMessage
         })
       }).then(res => res.json()).then(data => {
         if (data.ok) {
           Utils.showToast(successMsg);
         } else {
-          this.queueOutboxItem(token, chatId, textMessage, successMsg);
+          this.queueOutboxItem(textMessage, successMsg);
           Utils.showToast(offlineMsg);
         }
       }).catch(() => {
-        this.queueOutboxItem(token, chatId, textMessage, successMsg);
+        this.queueOutboxItem(textMessage, successMsg);
         Utils.showToast(offlineMsg);
       });
     }
@@ -979,7 +977,6 @@
       feedbacks.push(feedbackData);
       Utils.safeSetItem(CONFIG.STORAGE_KEYS.FEEDBACKS, JSON.stringify(feedbacks));
 
-      const creds = StorageService.getTgCredentials();
       const stars = "⭐".repeat(feedbackData.rating);
       const textMessage = `
 ⚡ <b>Новий відгук з додатку Графік змін!</b>
@@ -992,7 +989,7 @@
 ${Utils.escapeHtml(feedbackData.text)}
       `.trim();
 
-      TelegramService.sendOrQueue(creds.token, creds.chatId, textMessage, "Відгук надіслано в Telegram! ❤️", "Відгук збережено в офлайн-чергу");
+      TelegramService.sendOrQueue(textMessage, "Відгук надіслано в Telegram! ❤️", "Відгук збережено в офлайн-чергу");
       this.close();
     }
   };
