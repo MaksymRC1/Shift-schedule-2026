@@ -989,7 +989,7 @@
 ${Utils.escapeHtml(feedbackData.text)}
       `.trim();
 
-      TelegramService.sendOrQueue(textMessage, "Відгук успішно надіслано! ❤️", "Відгук збережено в офлайн-чергу");
+      TelegramService.sendOrQueue(textMessage, "Відгук успішно надіслано! ✅", "Відгук збережено в офлайн-чергу");
       this.close();
     }
   };
