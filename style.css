@@ -846,10 +846,23 @@ body.modal-open {
   }
 }
 
+.month-modal-header {
+  gap: 12px;
+}
+
 .month-modal-title-group {
   display: flex;
   flex-direction: column;
   gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.month-modal-title-group .modal-title,
+.month-modal-title-group .month-meta {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .month-modal-controls {
