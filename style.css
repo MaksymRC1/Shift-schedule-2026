@@ -78,14 +78,25 @@ body.modal-open {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(15, 23, 42, 0.85);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--border-color);
   padding: max(12px, env(safe-area-inset-top, 12px)) 16px 12px;
 }
 
-[data-theme="light"] .app-header {
+/* Pseudo-element for blur to avoid containing block bug with position: fixed */
+.app-header::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+[data-theme="light"] .app-header::before {
   background: rgba(248, 250, 252, 0.85);
 }
 
@@ -262,6 +273,10 @@ body.modal-open {
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
+}
+
+.mobile-only {
+  display: none !important;
 }
 
 .btn-action {
@@ -913,7 +928,15 @@ body.modal-open {
     justify-content: space-between;
   }
 
-  .action-buttons {
+  .desktop-only {
+    display: none !important;
+  }
+  
+  .mobile-only {
+    display: flex !important;
+  }
+
+  .action-buttons.mobile-only {
     position: fixed !important;
     bottom: 0 !important;
     left: 0 !important;
@@ -921,7 +944,6 @@ body.modal-open {
     z-index: 1000 !important;
     background: var(--bg-secondary) !important;
     border-top: 1px solid var(--border-color) !important;
-    display: flex !important;
     flex-direction: row !important;
     justify-content: space-around !important;
     padding: 6px 4px max(8px, env(safe-area-inset-bottom, 8px)) 4px !important;
@@ -930,7 +952,7 @@ body.modal-open {
     gap: 0 !important;
   }
 
-  .action-buttons .btn-action {
+  .action-buttons.mobile-only .btn-action {
     background: transparent !important;
     border: none !important;
     box-shadow: none !important;
@@ -945,10 +967,11 @@ body.modal-open {
     justify-content: center !important;
   }
 
-  .action-buttons .btn-action:hover,
-  .action-buttons .btn-action:active {
-    color: var(--text-primary) !important;
+  .action-buttons.mobile-only .btn-action:hover,
+  .action-buttons.mobile-only .btn-action:active {
     background: var(--bg-hover) !important;
+    transform: none !important;
+    color: var(--text-primary) !important;
   }
 
   .action-buttons .btn-action .nav-icon {

@@ -1120,10 +1120,10 @@ ${Utils.escapeHtml(feedbackData.text)}
       if (btnNextMonthModal) btnNextMonthModal.addEventListener("click", () => MonthModalController.nextMonth());
 
       // Notes List Listeners
-      const btnNotesList = document.getElementById("btnNotesList");
       const btnCloseNotesListModal = document.getElementById("btnCloseNotesListModal");
       const notesSearchInput = document.getElementById("notesSearchInput");
-      if (btnNotesList) btnNotesList.addEventListener("click", () => NotesListController.open());
+      const btnsNotesList = document.querySelectorAll(".btn-notes-list, #btnNotesList");
+      btnsNotesList.forEach(btn => btn.addEventListener("click", () => NotesListController.open()));
       if (btnCloseNotesListModal) btnCloseNotesListModal.addEventListener("click", () => NotesListController.close());
       if (notesSearchInput) notesSearchInput.addEventListener("input", () => NotesListController.renderList());
 
@@ -1136,24 +1136,23 @@ ${Utils.escapeHtml(feedbackData.text)}
       if (btnDoneStatsModal) btnDoneStatsModal.addEventListener("click", () => StatsController.close());
 
       // QR Code Listeners
-      const btnQrCode = document.getElementById("btnQrCode");
       const btnCloseQrModal = document.getElementById("btnCloseQrModal");
       const btnCopyUrl = document.getElementById("btnCopyUrl");
       const btnShareNative = document.getElementById("btnShareNative");
-      if (btnQrCode) btnQrCode.addEventListener("click", () => QrController.open());
+      const btnsQrCode = document.querySelectorAll(".btn-qr-code, #btnQrCode");
+      btnsQrCode.forEach(btn => btn.addEventListener("click", () => QrController.open()));
       if (btnCloseQrModal) btnCloseQrModal.addEventListener("click", () => QrController.close());
       if (btnCopyUrl) btnCopyUrl.addEventListener("click", () => QrController.copyUrl());
       if (btnShareNative) btnShareNative.addEventListener("click", () => QrController.shareNative());
 
       // Feedback Listeners
-      const btnFeedback = document.getElementById("btnFeedback");
       const btnCloseFeedbackModal = document.getElementById("btnCloseFeedbackModal");
       const btnCancelFeedback = document.getElementById("btnCancelFeedback");
       const btnSubmitFeedback = document.getElementById("btnSubmitFeedback");
       const btnToggleTgSettings = document.getElementById("btnToggleTgSettings");
       const starRating = document.getElementById("starRating");
-
-      if (btnFeedback) btnFeedback.addEventListener("click", () => FeedbackController.open());
+      const btnsFeedback = document.querySelectorAll(".btn-feedback, #btnFeedback");
+      btnsFeedback.forEach(btn => btn.addEventListener("click", () => FeedbackController.open()));
       if (btnCloseFeedbackModal) btnCloseFeedbackModal.addEventListener("click", () => FeedbackController.close());
       if (btnCancelFeedback) btnCancelFeedback.addEventListener("click", () => FeedbackController.close());
       if (btnSubmitFeedback) btnSubmitFeedback.addEventListener("click", () => FeedbackController.submit());
