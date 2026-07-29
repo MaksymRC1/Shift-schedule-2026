@@ -345,10 +345,16 @@ body.modal-open {
   align-items: center;
   user-select: none;
   transition: background 0.2s;
+  outline: none;
+}
+
+.legend-accordion summary:focus-visible {
+  outline: 2px solid var(--accent-color);
+  outline-offset: -2px;
 }
 
 .legend-accordion summary::-webkit-details-marker {
-  display: none;
+  display: none !important;
 }
 
 .legend-accordion summary::after {
@@ -370,20 +376,20 @@ body.modal-open {
 /* Legend & Filters Bar inside accordion */
 .toolbar-section {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 12px 16px;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 16px;
+  padding: 16px;
   background: var(--bg-primary);
+  border-top: 1px solid var(--border-color);
 }
 
 .legend {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  gap: 12px;
+  gap: 10px;
   font-size: 0.8125rem;
+  justify-content: flex-start;
 }
 
 .legend-item {
@@ -439,31 +445,22 @@ body.modal-open {
   display: flex;
   align-items: center;
   gap: 6px;
-  overflow-x: auto;
-  max-width: 100%;
-  padding-bottom: 2px;
-}
-
-.filter-label {
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-  font-weight: 600;
-  margin-right: 4px;
-  white-space: nowrap;
+  width: 100%;
 }
 
 .btn-filter {
+  flex: 1;
   background: var(--bg-primary);
   border: 1px solid var(--border-color);
   color: var(--text-secondary);
-  padding: 6px 14px;
-  min-height: 38px;
+  padding: 8px 0;
+  min-height: 40px;
   border-radius: 8px;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
-  white-space: nowrap;
+  text-align: center;
 }
 
 .btn-filter:hover, .btn-filter.active {

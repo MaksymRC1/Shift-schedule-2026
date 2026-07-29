@@ -1086,9 +1086,14 @@ ${Utils.escapeHtml(feedbackData.text)}
 
       shiftFilterButtons.forEach(btn => {
         btn.addEventListener("click", () => {
-          shiftFilterButtons.forEach(b => b.classList.remove("active"));
-          btn.classList.add("active");
-          State.activeFilter = btn.dataset.filter;
+          if (btn.classList.contains("active")) {
+            btn.classList.remove("active");
+            State.activeFilter = "all";
+          } else {
+            shiftFilterButtons.forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+            State.activeFilter = btn.dataset.filter;
+          }
           CalendarRenderer.render();
           if (State.isMonthModalOpen) {
             MonthModalController.renderCurrentMonth();
