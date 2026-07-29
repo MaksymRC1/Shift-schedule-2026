@@ -935,12 +935,14 @@ body.modal-open {
     border: none !important;
     box-shadow: none !important;
     flex-direction: column !important;
-    gap: 2px !important;
-    padding: 4px 2px !important;
-    min-height: auto !important;
-    width: auto !important;
-    border-radius: 6px !important;
+    gap: 4px !important;
+    padding: 6px 2px !important;
+    height: 56px !important;
+    flex: 1 !important;
+    border-radius: 8px !important;
     color: var(--text-secondary) !important;
+    align-items: center !important;
+    justify-content: center !important;
   }
 
   .action-buttons .btn-action:hover,

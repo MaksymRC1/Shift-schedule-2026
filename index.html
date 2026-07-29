@@ -18,6 +18,7 @@
     <link rel="icon" type="image/svg+xml" href="./icons/icon.svg" />
 
     <title>Графік змін | Мультирічний календар PWA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL,GRAD,opsz@400,0,0,24" rel="stylesheet" />
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
@@ -25,11 +26,11 @@
     <header class="app-header">
       <div class="header-container">
         <div class="title-group">
-          <h1>⚡ Графік змін</h1>
+          <h1><span class="material-symbols-outlined" style="vertical-align: text-bottom;">bolt</span> Графік змін</h1>
           <button id="btnThemeToggle" class="theme-toggle-modern" aria-label="Перемикач теми" title="Змінити тему" role="switch" aria-checked="false">
             <span class="toggle-track">
-              <span class="toggle-icon sun">☀️</span>
-              <span class="toggle-icon moon">🌙</span>
+              <span class="toggle-icon sun"><span class="material-symbols-outlined" style="font-size: 16px;">light_mode</span></span>
+              <span class="toggle-icon moon"><span class="material-symbols-outlined" style="font-size: 16px;">dark_mode</span></span>
               <span class="toggle-thumb"></span>
             </span>
           </button>
@@ -44,10 +45,9 @@
           </div>
 
           <div class="action-buttons" role="navigation" aria-label="Головне меню">
-            <button id="btnNotesList" class="btn-action"><span class="nav-icon">📝</span><span class="nav-text">Нотатки</span></button>
-            <button id="btnStats" class="btn-action"><span class="nav-icon">📊</span><span class="nav-text">Статистика</span></button>
-            <button id="btnQrCode" class="btn-action"><span class="nav-icon">📲</span><span class="nav-text">QR-код</span></button>
-            <button id="btnFeedback" class="btn-action"><span class="nav-icon">💬</span><span class="nav-text">Відгук</span></button>
+            <button id="btnNotesList" class="btn-action"><span class="material-symbols-outlined nav-icon">edit_note</span><span class="nav-text">Нотатки</span></button>
+            <button id="btnQrCode" class="btn-action"><span class="material-symbols-outlined nav-icon">qr_code_scanner</span><span class="nav-text">QR-код</span></button>
+            <button id="btnFeedback" class="btn-action"><span class="material-symbols-outlined nav-icon">chat</span><span class="nav-text">Відгук</span></button>
           </div>
       </div>
     </header>
@@ -259,23 +259,7 @@
         </div>
         <div class="modal-footer">
           <button id="btnCancelFeedback" class="btn-action">Скасувати</button>
-          <button id="btnSubmitFeedback" class="btn-action btn-primary">Надіслати відгук</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal: Statistics Drawer -->
-    <div id="statsModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="statsModalTitle">
-      <div class="modal-card">
-        <div class="modal-header">
-          <h2 id="statsModalTitle" class="modal-title">Статистика використання</h2>
-          <button id="btnCloseStatsModal" class="btn-close" aria-label="Закрити">&times;</button>
-        </div>
-        <div class="modal-body" id="statsModalContent">
-          <!-- Populated dynamically by JS -->
-        </div>
-        <div class="modal-footer">
-          <button id="btnDoneStatsModal" class="btn-action btn-primary">Готово</button>
+          <button id="btnSubmitFeedback" class="btn-action btn-primary">Надіслати</button>
         </div>
       </div>
     </div>
