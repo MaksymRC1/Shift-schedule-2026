@@ -325,16 +325,16 @@ body.modal-open {
 
 /* Legend Accordion */
 .legend-accordion {
-  margin-top: 12px;
+  position: relative;
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
-  border-radius: 12px;
-  overflow: hidden;
+  border-radius: 10px;
   box-shadow: var(--shadow);
 }
 
 .legend-accordion summary {
-  padding: 12px 16px;
+  padding: 0 16px;
+  height: 42px;
   font-weight: 600;
   font-size: 0.95rem;
   color: var(--text-primary);
@@ -346,6 +346,7 @@ body.modal-open {
   user-select: none;
   transition: background 0.2s;
   outline: none;
+  border-radius: 10px;
 }
 
 .legend-accordion summary:focus-visible {
@@ -366,7 +367,6 @@ body.modal-open {
 
 .legend-accordion[open] summary {
   background: var(--bg-hover);
-  border-bottom: 1px solid var(--border-color);
 }
 
 .legend-accordion[open] summary::after {
@@ -375,13 +375,20 @@ body.modal-open {
 
 /* Legend & Filters Bar inside accordion */
 .toolbar-section {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 280px;
+  z-index: 100;
   display: flex;
   flex-direction: column;
   align-items: stretch;
   gap: 16px;
-  padding: 16px;
+  padding: 12px;
   background: var(--bg-primary);
-  border-top: 1px solid var(--border-color);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 
@@ -890,7 +897,7 @@ body.modal-open {
     gap: 8px;
   }
   .year-selector {
-    width: 100%;
+    flex: 1;
     justify-content: space-between;
   }
   .year-display {

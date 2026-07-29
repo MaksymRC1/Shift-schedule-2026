@@ -271,13 +271,12 @@
 
         const remaining = [];
         outbox.forEach((item) => {
-          fetch(`https://api.telegram.org/bot${item.token}/sendMessage`, {
+          fetch(`/api/send-message`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              chat_id: item.chatId,
-              text: item.text,
-              parse_mode: 'HTML'
+              chatId: item.chatId,
+              text: item.text
             })
           }).then(res => res.json()).then(data => {
             if (data.ok && item.successToast) {
@@ -304,13 +303,12 @@
         return;
       }
 
-      fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+      fetch(`/api/send-message`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          chat_id: chatId,
-          text: textMessage,
-          parse_mode: 'HTML'
+          chatId: chatId,
+          text: textMessage
         })
       }).then(res => res.json()).then(data => {
         if (data.ok) {
