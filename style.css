@@ -64,7 +64,6 @@ body {
   line-height: 1.5;
   transition: background-color 0.3s ease, color 0.3s ease;
   min-height: 100vh;
-  padding-bottom: max(85px, env(safe-area-inset-bottom, 85px));
 }
 
 /* Prevent body scrolling when a modal dialog is open */
@@ -273,6 +272,10 @@ body.modal-open {
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
+}
+
+.action-buttons .nav-icon {
+  display: none;
 }
 
 .btn-action {
@@ -933,6 +936,10 @@ body.modal-open {
     gap: 0 !important;
   }
 
+  body {
+    padding-bottom: max(85px, env(safe-area-inset-bottom, 85px));
+  }
+
   .action-buttons .btn-action {
     background: transparent !important;
     border: none !important;
@@ -956,6 +963,7 @@ body.modal-open {
   }
 
   .action-buttons .btn-action .nav-icon {
+    display: inline-flex !important;
     font-size: 1.3rem !important;
   }
 
