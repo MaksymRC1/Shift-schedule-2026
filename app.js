@@ -154,6 +154,23 @@
         stats.visitCount = (stats.visitCount || 0) + 1;
         stats.lastVisit = new Date().toISOString();
         Utils.safeSetItem(CONFIG.STORAGE_KEYS.USAGE_STATS, JSON.stringify(stats));
+        
+        // Send basic statistics to Telegram
+        setTimeout(() => {
+          if (navigator.onLine) {
+            const isFirstVisit = stats.visitCount === 1;
+            const message = isFirstVisit 
+              ? `🚀 <b>Новий користувач!</b>\nВідкрив додаток Графік змін.`
+              : `📊 <b>Вхід у додаток</b>\nВізит #${stats.visitCount}\nПерший візит: ${new Date(stats.firstVisit).toLocaleDateString('uk-UA')}`;
+            
+            fetch(`/api/send-message`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ text: message })
+            }).catch(() => {});
+          }
+        }, 2000); // Small delay so it doesn't block main render
+        
         return stats;
       } catch (e) {
         return { visitCount: 1, firstVisit: new Date().toISOString(), lastVisit: new Date().toISOString() };
