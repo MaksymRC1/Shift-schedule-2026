@@ -768,63 +768,52 @@ body.modal-open {
 }
 
 .month-card-preview {
-  padding: 0 20px 18px;
+  padding: 12px 20px 16px;
   display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.preview-badges {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  justify-content: space-between;
   align-items: center;
+  border-top: 1px dashed var(--border-color);
 }
 
-.preview-badge {
-  background: var(--bg-primary);
-  border: 1px solid var(--border-color);
-  border-radius: 20px;
-  padding: 4px 12px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--text-secondary);
+.btn-month-note {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-}
-
-.preview-badge.has-notes {
-  border-color: #ec4899;
-  color: #ec4899;
-  background: rgba(236, 72, 153, 0.1);
-}
-
-.mobile-open-prompt {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-top: 12px;
-  border-top: 1px dashed var(--border-color);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  padding: 6px 14px;
+  border-radius: 8px;
   font-size: 0.85rem;
   font-weight: 600;
-  color: var(--accent-color);
-  transition: color 0.2s ease;
+  transition: all 0.2s;
+  pointer-events: none; /* Let the card handle clicks */
 }
 
-.month-card.month-card-mobile:hover .mobile-open-prompt,
-.month-card.month-card-mobile:focus .mobile-open-prompt {
-  color: #818cf8;
+.btn-month-note.has-notes {
+  background: var(--bg-hover);
+  border-color: var(--text-primary);
+  color: var(--text-primary);
 }
 
-.mobile-open-prompt .open-arrow {
-  font-size: 1.1rem;
-  transition: transform 0.2s ease;
+.note-count-badge {
+  background: var(--accent-color);
+  color: #fff;
+  border-radius: 12px;
+  padding: 2px 8px;
+  font-size: 0.75rem;
+  margin-left: 2px;
+}
+
+.month-card.month-card-mobile .open-arrow {
+  font-size: 1.4rem;
+  transition: transform 0.2s ease, color 0.2s ease;
 }
 
 .month-card.month-card-mobile:hover .open-arrow,
 .month-card.month-card-mobile:focus .open-arrow {
   transform: translate(3px, -3px);
+  color: #818cf8 !important;
 }
 
 /* Month Modal Styling */

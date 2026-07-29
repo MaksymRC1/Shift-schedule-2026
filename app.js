@@ -500,26 +500,24 @@
         }
       });
 
-      const noteBadgeClass = noteCount > 0 ? "preview-badge has-notes" : "preview-badge";
-      const noteBadgeText = noteCount > 0 ? `📝 Нотаток: ${noteCount}` : `📝 Немає нотаток`;
+      const noteBtnClass = noteCount > 0 ? "btn-month-note has-notes" : "btn-month-note";
+      const noteCountText = noteCount > 0 ? `<span class="note-count-badge">${noteCount}</span>` : ``;
 
       monthCard.innerHTML = `
         <div class="month-header">
           <div class="month-title" style="display:flex; align-items:center; gap:8px;">
-            <span>📅</span>
+            <span class="material-symbols-outlined" style="font-size: 1.2rem;">calendar_month</span>
             <span>${CONFIG.MONTH_NAMES[monthIdx]} ${year}</span>
           </div>
           <div class="month-meta">${daysInMonth} днів</div>
         </div>
         <div class="month-card-preview">
-          <div class="preview-badges">
-            <span class="preview-badge">⚡ 5 змін (А-Д)</span>
-            <span class="${noteBadgeClass}">${noteBadgeText}</span>
+          <div class="${noteBtnClass}">
+            <span class="material-symbols-outlined" style="font-size: 1.1rem;">edit_note</span>
+            <span>Нотатки</span>
+            ${noteCountText}
           </div>
-          <div class="mobile-open-prompt">
-            <span>👉 Натисніть або наведіть фокус для перегляду</span>
-            <span class="open-arrow">↗</span>
-          </div>
+          <span class="material-symbols-outlined open-arrow" style="color: var(--text-secondary);">arrow_outward</span>
         </div>
       `;
 
