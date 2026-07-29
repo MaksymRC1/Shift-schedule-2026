@@ -55,7 +55,7 @@
     <header class="app-header">
       <div class="header-container">
         <div class="title-group">
-          <h1><span class="material-symbols-outlined" style="vertical-align: text-bottom;">bolt</span> Графік змін<span style="font-size: 0.85rem; font-weight: normal; color: var(--text-secondary); margin-left: 8px; vertical-align: middle;">v1.1</span></h1>
+          <h1 id="appHeaderTitle" style="cursor: pointer; transition: all 0.3s ease;"><span class="material-symbols-outlined" style="vertical-align: text-bottom;">bolt</span> Графік змін<span style="font-size: 0.85rem; font-weight: normal; color: var(--text-secondary); margin-left: 8px; vertical-align: middle;">v1.1</span></h1>
           <button id="btnThemeToggle" class="theme-toggle-modern" aria-label="Перемикач теми" title="Змінити тему" role="switch" aria-checked="false">
             <span class="toggle-track">
               <span class="toggle-icon sun"><span class="material-symbols-outlined" style="font-size: 16px;">light_mode</span></span>
@@ -245,6 +245,42 @@
         <div class="modal-footer">
           <button id="btnCancelFeedback" class="btn-action">Скасувати</button>
           <button id="btnSubmitFeedback" class="btn-action btn-primary">Надіслати</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal: Install App Info -->
+    <div id="installAppModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="installAppTitle">
+      <div class="modal-card" style="max-width: 480px;">
+        <div class="drawer-handle"></div>
+        <div class="modal-header">
+          <h2 id="installAppTitle" class="modal-title">Встановіть як додаток</h2>
+          <button id="btnCloseInstallModal" class="btn-close" aria-label="Закрити">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p class="modal-text" style="margin-bottom: 15px; font-size: 1rem; color: var(--text-secondary);">
+            Цей сайт є повноцінним додатком (PWA). Встановіть його на свій пристрій, щоб він працював без інтернету, відкривався на весь екран та був завжди під рукою!
+          </p>
+          
+          <div style="background: var(--surface-variant); padding: 15px; border-radius: 12px; margin-bottom: 15px;">
+            <h3 style="font-size: 1.05rem; margin-bottom: 10px; color: var(--text-primary);"><span class="material-symbols-outlined" style="vertical-align: middle; font-size: 1.2rem;">apple</span> iOS (Safari)</h3>
+            <ol style="margin-left: 20px; color: var(--text-secondary); line-height: 1.5; font-size: 0.95rem;">
+              <li>Натисніть кнопку <b>Поділитися</b> <span class="material-symbols-outlined" style="vertical-align: middle; font-size: 1.1rem;">ios_share</span> внизу екрана</li>
+              <li>Оберіть <b>"На екран Домашній"</b> (Add to Home Screen)</li>
+              <li>Натисніть <b>"Додати"</b></li>
+            </ol>
+          </div>
+
+          <div style="background: var(--surface-variant); padding: 15px; border-radius: 12px;">
+            <h3 style="font-size: 1.05rem; margin-bottom: 10px; color: var(--text-primary);"><span class="material-symbols-outlined" style="vertical-align: middle; font-size: 1.2rem;">android</span> Android (Chrome)</h3>
+            <ol style="margin-left: 20px; color: var(--text-secondary); line-height: 1.5; font-size: 0.95rem;">
+              <li>Натисніть меню <b>⋮</b> у правому верхньому куті</li>
+              <li>Оберіть <b>"Встановити додаток"</b> або <b>"Додати на гол. екран"</b></li>
+            </ol>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="btnGotItInstall" class="btn-action btn-primary" style="width: 100%;">Зрозуміло</button>
         </div>
       </div>
     </div>

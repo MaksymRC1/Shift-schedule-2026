@@ -1037,7 +1037,65 @@ ${Utils.escapeHtml(feedbackData.text)}
     }
   };
 
-  // --- 16. App Orchestrator & Event Handlers ---
+  // --- 16. Install App Controller ---
+  const InstallAppController = {
+    init() {
+      const installAppModal = document.getElementById("installAppModal");
+      const appHeaderTitle = document.getElementById("appHeaderTitle");
+      
+      if (appHeaderTitle) {
+        setTimeout(() => {
+          if (window.matchMedia(CONFIG.MOBILE_BREAKPOINT_QUERY).matches) {
+            appHeaderTitle.classList.add("highlight-title");
+            
+            setTimeout(() => {
+              appHeaderTitle.classList.remove("highlight-title");
+            }, 4500); // Animation runs for 3 iterations * 1.5s = 4.5s
+          }
+        }, 5000);
+
+        appHeaderTitle.addEventListener("click", () => {
+          if (installAppModal) {
+            installAppModal.classList.add("active");
+            document.body.classList.add("modal-open");
+          }
+        });
+      }
+
+      const btnCloseInstallModal = document.getElementById("btnCloseInstallModal");
+      const btnGotItInstall = document.getElementById("btnGotItInstall");
+
+      [btnCloseInstallModal, btnGotItInstall].forEach(btn => {
+        if (btn) {
+          btn.addEventListener("click", () => this.close());
+        }
+      });
+
+      if (installAppModal) {
+        let ts_install = 0;
+        const handle_install = installAppModal.querySelector(".drawer-handle");
+        if (handle_install) {
+          handle_install.addEventListener("touchstart", (e) => { ts_install = e.touches[0].clientY; }, { passive: true });
+          handle_install.addEventListener("touchend", (e) => {
+            if (e.changedTouches[0].clientY - ts_install > 50) this.close();
+          });
+        }
+        installAppModal.addEventListener("click", (e) => {
+          if (e.target === installAppModal) this.close();
+        });
+      }
+    },
+    
+    close() {
+      const installAppModal = document.getElementById("installAppModal");
+      if (installAppModal) {
+        installAppModal.classList.remove("active");
+        document.body.classList.remove("modal-open");
+      }
+    }
+  };
+
+  // --- 17. App Orchestrator & Event Handlers ---
   const App = {
     init() {
       StorageService.trackUsage();
@@ -1053,6 +1111,8 @@ ${Utils.escapeHtml(feedbackData.text)}
         MonthModalController.open(State.currentYear, now.getMonth());
         MonthModalController.scrollToToday();
       }
+
+      InstallAppController.init();
     },
 
     setupEventListeners() {
@@ -1233,6 +1293,11 @@ ${Utils.escapeHtml(feedbackData.text)}
             MonthModalController.close();
             return;
           }
+          const installAppModal = document.getElementById("installAppModal");
+          if (installAppModal && installAppModal.classList.contains("active")) {
+            InstallAppController.close();
+            return;
+          }
         }
       });
 
@@ -1249,7 +1314,7 @@ ${Utils.escapeHtml(feedbackData.text)}
     }
   };
 
-  // --- 17. DOMContentLoaded Launch ---
+  // --- 18. DOMContentLoaded Launch ---
   document.addEventListener("DOMContentLoaded", () => {
     App.init();
   });
