@@ -384,62 +384,7 @@ body.modal-open {
   border-top: 1px solid var(--border-color);
 }
 
-.legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  font-size: 0.8125rem;
-  justify-content: flex-start;
-}
 
-.legend-item {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--text-secondary);
-  font-weight: 500;
-}
-
-.legend-color {
-  width: 20px;
-  height: 20px;
-  border-radius: 5px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.75rem;
-  font-weight: 700;
-}
-
-.legend-color.shift-1 {
-  background: var(--shift-1-bg);
-  color: var(--shift-1-text);
-}
-.legend-color.shift-2 {
-  background: var(--shift-2-bg);
-  color: var(--shift-2-text);
-}
-.legend-color.shift-3 {
-  background: var(--shift-3-bg);
-  color: var(--shift-3-text);
-}
-.legend-color.shift-off {
-  background: var(--bg-primary);
-  border: 1px solid var(--border-color);
-  color: var(--text-secondary);
-}
-.legend-color.weekend {
-  background: var(--weekend-bg);
-  color: var(--weekend-text);
-  border: 1px solid var(--border-color);
-}
-.legend-color.note-badge {
-  background: #ec4899;
-  color: #fff;
-  border-radius: 50%;
-  width: 14px;
-  height: 14px;
-}
 
 .shift-filters {
   display: flex;
