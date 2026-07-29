@@ -266,32 +266,30 @@
       }
     },
 
-    flushOutbox() {
+    async flushOutbox() {
       if (!navigator.onLine) return;
       try {
         const outbox = JSON.parse(Utils.safeGetItem(CONFIG.STORAGE_KEYS.OUTBOX, "[]"));
         if (outbox.length === 0) return;
 
         const remaining = [];
-        outbox.forEach((item) => {
-          fetch(`/api/send-message`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              text: item.text
-            })
-          }).then(res => res.json()).then(data => {
+        for (const item of outbox) {
+          try {
+            const res = await fetch(`/api/send-message`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ text: item.text })
+            });
+            const data = await res.json();
             if (data.ok && item.successToast) {
               Utils.showToast(item.successToast);
             } else if (!data.ok) {
               remaining.push(item);
-              Utils.safeSetItem(CONFIG.STORAGE_KEYS.OUTBOX, JSON.stringify(remaining));
             }
-          }).catch(() => {
+          } catch {
             remaining.push(item);
-            Utils.safeSetItem(CONFIG.STORAGE_KEYS.OUTBOX, JSON.stringify(remaining));
-          });
-        });
+          }
+        }
         Utils.safeSetItem(CONFIG.STORAGE_KEYS.OUTBOX, JSON.stringify(remaining));
       } catch (e) {
         console.warn("Outbox flush failed:", e);
@@ -421,7 +419,7 @@
             }
 
             const shiftName = Utils.getShiftName(shiftVal);
-          let tooltip = `${dateStr} [${shiftName}]: `;
+            let tooltip = `${dateStr} [${shiftName}]: `;
             if (note.statusTag) tooltip += `[${note.statusTag}] `;
             if (note.text) tooltip += note.text;
             td.title = tooltip;
@@ -695,11 +693,10 @@
       const noteTextInput = document.getElementById("noteTextInput");
       const noteModal = document.getElementById("noteModal");
 
-      const shiftName = Utils.getShiftName(data.shift);
-      const shiftText = data.shift ? `${shiftName}` : "Вихідний";
+      const shiftTypeName = Utils.getShiftName(data.shift);
+      const shiftText = data.shift ? shiftTypeName : "Вихідний";
       if (modalDateTitle) {
-        const shiftName = Utils.getShiftName(data.shiftGroup);
-        modalDateTitle.textContent = `${data.dateStr} (${shiftName}) — ${shiftText}`;
+        modalDateTitle.textContent = `${data.dateStr} (${data.shiftGroup}) — ${shiftText}`;
       }
 
       if (data.note) {
@@ -834,7 +831,7 @@
       });
 
       if (count === 0) {
-        notesListContainer.innerHTML = `<div style="text-align: center; color: var(--text-secondary); padding: 24px;">Нічого не знайдено за запитом "${query}"</div>`;
+        notesListContainer.innerHTML = `<div style="text-align: center; color: var(--text-secondary); padding: 24px;">Нічого не знайдено за запитом "${Utils.escapeHtml(query)}"</div>`;
       }
     }
   };
@@ -842,12 +839,10 @@
   // --- 14. QR Code Modal Controller ---
   const QrController = {
     open() {
-      const qrUrlInput = document.getElementById("qrUrlInput");
       const qrImage = document.getElementById("qrImage");
       const qrModal = document.getElementById("qrModal");
 
       const currentUrl = window.location.href;
-      if (qrUrlInput) qrUrlInput.value = currentUrl;
 
       if (qrImage) {
         const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(currentUrl)}&margin=10`;
@@ -1062,7 +1057,7 @@ ${Utils.escapeHtml(feedbackData.text)}
         appHeaderTitle.addEventListener("click", () => {
           if (installAppModal) {
             installAppModal.classList.add("active");
-            document.body.classList.add("modal-open");
+            Utils.updateModalScrollLock();
           }
         });
       }
@@ -1095,7 +1090,7 @@ ${Utils.escapeHtml(feedbackData.text)}
       const installAppModal = document.getElementById("installAppModal");
       if (installAppModal) {
         installAppModal.classList.remove("active");
-        document.body.classList.remove("modal-open");
+        Utils.updateModalScrollLock();
       }
     }
   };
@@ -1205,13 +1200,7 @@ ${Utils.escapeHtml(feedbackData.text)}
       if (btnCloseNotesListModal) btnCloseNotesListModal.addEventListener("click", () => NotesListController.close());
       if (notesSearchInput) notesSearchInput.addEventListener("input", () => NotesListController.renderList());
 
-      // Statistics Listeners
-      const btnStats = document.getElementById("btnStats");
-      const btnCloseStatsModal = document.getElementById("btnCloseStatsModal");
-      const btnDoneStatsModal = document.getElementById("btnDoneStatsModal");
-      if (btnStats) btnStats.addEventListener("click", () => StatsController.open());
-      if (btnCloseStatsModal) btnCloseStatsModal.addEventListener("click", () => StatsController.close());
-      if (btnDoneStatsModal) btnDoneStatsModal.addEventListener("click", () => StatsController.close());
+
 
       // QR Code Listeners
       const btnCloseQrModal = document.getElementById("btnCloseQrModal");

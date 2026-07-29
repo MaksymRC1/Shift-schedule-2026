@@ -24,6 +24,8 @@
 
   --accent-color: #6366f1;
   --accent-hover: #4f46e5;
+  --primary-color: #818cf8;
+  --surface-variant: rgba(99, 102, 241, 0.1);
   --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
 }
 
@@ -47,6 +49,8 @@
 
   --weekend-bg: #fef3c7;
   --weekend-text: #d97706;
+  --primary-color: #6366f1;
+  --surface-variant: rgba(99, 102, 241, 0.08);
   --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
 }
 
